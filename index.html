@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tahanan ng Pagmamahal - Children's Home</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brand-red': '#dc2626',
+                        'brand-orange': '#ea580c',
+                        'brand-yellow': '#d97706'
+                    }
+                }
+            }
+        }
+        document.addEventListener("DOMContentLoaded", function() {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            } else {
+                entry.target.classList.remove('visible');
+            }
+            });
+        }, { threshold: 0.15 });
+
+        document.querySelectorAll('.slide-up').forEach(el => {
+            observer.observe(el);
+        });
+        });
+    </script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .slide-up {
+        opacity: 0;
+        transform: translateY(40px);
+        transition: opacity 0.7s cubic-bezier(.4,0,.2,1), transform 0.7s cubic-bezier(.4,0,.2,1);
+        }
+
+        .slide-up.visible {
+        opacity: 1;
+        transform: translateY(0);
+        }
+        </style>
+</head>
+<body class="font-[Poppins]">
+    <!-- Header -->
+    <header class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <img src="tahanan-logo.png" alt="Tahanan ng Pagmamahal" class="h-12">
+                </div>
+                
+                <!-- Navigation -->
+                <nav class="hidden md:flex space-x-8">
+                    <a href="#" class="text-gray-700 hover:text-brand-red transition-colors">Home</a>
+                    <a href="#" class="text-gray-700 hover:text-brand-red transition-colors">About Us</a>
+                    <a href="#" class="text-gray-700 hover:text-brand-red transition-colors">Blog</a>
+                    <a href="#" class="text-gray-700 hover:text-brand-red transition-colors">Contact</a>
+                </nav>
+                
+                <!-- Mobile menu button -->
+                <button class="md:hidden p-2" onclick="toggleMobileMenu()">
+                    <i class="fas fa-bars text-gray-700"></i>
+                </button>
+            </div>
+            
+            <!-- Mobile Navigation -->
+            <div id="mobile-menu-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden md:hidden transition-opacity duration-300" onclick="toggleMobileMenu()"></div>
+            <div id="mobile-menu" class="fixed top-0 right-0 h-full w-80 max-w-sm bg-white shadow-xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out md:hidden">
+                <div class="flex justify-between items-center p-4 border-b">
+                    <h2 class="text-lg font-semibold text-gray-700">Menu</h2>
+                    <button onclick="toggleMobileMenu()" class="p-2">
+                        <i class="fas fa-times text-gray-700"></i>
+                    </button>
+                </div>
+                <div class="flex flex-col p-4">
+                    <a href="#" class="text-gray-700 hover:text-brand-red transition-colors py-3 border-b border-gray-100">Home</a>
+                    <a href="#" class="text-gray-700 hover:text-brand-red transition-colors py-3 border-b border-gray-100">About Us</a>
+                    <a href="#" class="text-gray-700 hover:text-brand-red transition-colors py-3 border-b border-gray-100">Blog</a>
+                    <a href="#" class="text-gray-700 hover:text-brand-red transition-colors py-3">Contact</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative h-screen bg-gradient-to-r from-amber-100 to-orange-200 overflow-hidden">
+        <div class="absolute inset-0">
+            <img src="29.jpg" alt="Caring hands" class="w-full h-full object-cover opacity-80">
+            <div class="absolute inset-0 bg-black bg-opacity-30"></div>
+        </div>
+        
+        <div class="relative z-10 flex items-center justify-center h-full text-center text-white px-4">
+            <div class="max-w-4xl">
+                <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold mb-4 text-balance">
+                    Tahanan ng<br>Pagmamahal
+                </h1>
+                <p class="text-lg md:text-l mb-1 tracking-wider uppercase">Children's Home</p>
+                        <br>
+                <p class="text-base md:text-lg mb-16 max-w-2xl mx-auto">
+                    Join our Mission:<br>
+                    Together, we can help more, create their stories and give them a future filled with love.
+                </p>
+                <button onclick="window.location.href='login.html'" class="bg-brand-red hover:bg-brand-orange text-white font-semibold px-8 py-3 rounded-lg shadow-lg transition-all duration-200 transform hover:-translate-y-1 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-brand-orange focus:ring-offset-2">
+                    <i class="fas fa-sign-in-alt mr-2"></i> Log In
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Our Work Section -->
+    <section class="py-16 bg-gray-50 slide-up">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <!-- Image -->
+                <div class="order-2 lg:order-1">
+                    <img src="pic 1.jpg" alt="Children at Tahanan ng Pagmamahal" class="w-full rounded-lg shadow-lg">
+                </div>
+                
+                <!-- Content -->
+                <div class="order-1 lg:order-2">
+                    <div class="text-brand-red mb-4">
+                        <i class="fas fa-hands-helping text-3xl"></i>
+                    </div>
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6">Our Work</h2>
+                    <p class="text-gray-600 mb-6 leading-relaxed">
+                        We are committed to the mission of providing essential support to these children, ensuring their fundamental needs are met, and empowering them with education and access to quality healthcare. Together, we can make a lasting impact on their lives and create a brighter future for every child in our care.
+                    </p>
+                    <button class="bg-brand-orange hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors">
+                        Learn More
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Beacon of Hope Section -->
+    <section class="py-16 bg-white slide-up">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <!-- Content -->
+                <div>
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6 text-balance">
+                        Be a Beacon of Hope! Embrace a Child's Journey with Love and Care.
+                    </h2>
+                    <p class="text-gray-600 mb-4 leading-relaxed">
+                        Every child deserves to feel cherished, cared for, and hopeful. Your donations will pave the way for a brighter future, offering shelter, education, healthcare, and a profound sense of belonging.
+                    </p>
+                    <p class="text-gray-600 leading-relaxed">
+                        United, we can become the guiding light in their lives, empowering them to spread their wings and soar.
+                    </p>
+                    <p class="text-gray-600 mt-4 leading-relaxed">
+                        And believe us when they heal and make a lasting impact!
+                    </p>
+                </div>
+                
+                <!-- Image -->
+                <div>
+                    <img src="pic2.jpg" alt="Helping hands" class="w-full rounded-lg shadow-lg">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Credentials Section -->
+    <section class="py-16 bg-gray-50 slide-up">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <!-- Image -->
+                <div>
+                    <img src="pic3.jpg" alt="Children learning and playing" class="w-full rounded-lg shadow-lg">
+                </div>
+                
+                <!-- Credentials -->
+                <div>
+                    <div class="text-brand-red mb-6 text-center">
+                        <Img src="images.png" alt="Tahanan ng Pagmamahal" class="h-16 mx-auto">
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div class="border-b border-gray-200 pb-3">
+                            <h3 class="font-semibold text-gray-900">DSWD REGISTRATION</h3>
+                            <p class="text-sm text-gray-600">DSWD-NCR-RO-SLF-2021</p>
+                        </div>
+                        
+                        <div class="border-b border-gray-200 pb-3">
+                            <h3 class="font-semibold text-gray-900">DSWD LICENSE</h3>
+                            <p class="text-sm text-gray-600">DSWD-NCR-RO-L-2022-047</p>
+                        </div>
+                        
+                        <div class="border-b border-gray-200 pb-3">
+                            <h3 class="font-semibold text-gray-900">DSWD Accreditation</h3>
+                            <p class="text-sm text-gray-600">DSWD-NCR-ACC-1-2023</p>
+                        </div>
+                        
+                        <div class="border-b border-gray-200 pb-3">
+                            <h3 class="font-semibold text-gray-900">DSWD Public Solicitation Permit</h3>
+                            <p class="text-sm text-gray-600">DSWD-NCR-PSP-2024-0016</p>
+                        </div>
+                        
+                        <div>
+                            <h3 class="font-semibold text-gray-900">PCNC Accreditation No.</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mission Statement Section -->
+    <section class="py-16 bg-gradient-to-r from-red-400 to-orange-700">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 slide-up">
+            <div class="grid lg:grid-cols-2 gap-12 items-center text-white">
+                <!-- Content -->
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold mb-6">
+                        Become a Valued Member of Our Advocacy Team: Collaborate, Learn, and Empower Together.
+                    </h2>
+                    <p class="mb-4 leading-relaxed">
+                        At Tahanan ng Pagmamahal, we view each step as part and parcel of community of advocates. Here, good have the chance to volunteer, learn, collaborate, or become a sponsor. Join our dedicated volunteers, working side by side as we make a powerful force for positive change.
+                    </p>
+                    <p class="mb-4 leading-relaxed">
+                        Through our shared commitment and collective efforts, we can make a tangible impact on the lives of underprivileged children. Together, we can bring hope to a brighter future filled with those in need of care.
+                    </p>
+                </div>
+                
+                <!-- Image -->
+                <div>
+                    <img src="pic4.jpg" alt="Community volunteers with children" class="w-full rounded-lg shadow-lg">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-red-600 text-white py-12 ">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 slide-up">
+            <div class="grid md:grid-cols-4 gap-8">
+                <!-- Logo and Info -->
+                <div class="md:col-span-1">
+                    <div class="mb-4">
+                        <img src="images.png"alt="Tahanan ng Pagmamahal" class="h-16 mb-4">
+                    </div>
+                    <div class="space-y-2 text-sm">
+                        <p><strong>DSWD LICENSE</strong></p>
+                        <p>DSWD-NCR-RO-L-2022-047</p>
+                        <p><strong>DSWD ACCREDITATION</strong></p>
+                        <p><strong>DSWD PUBLIC SOLICITATION</strong></p>
+                        <p>DSWD-NCR-PSP-2024-0016</p>
+                        <p><strong>PCNC ACCREDITATION</strong></p>
+                    </div>
+                </div>
+                
+                <!-- About -->
+                <div>
+                    <h3 class="font-semibold mb-4">About</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="hover:text-yellow-200 transition-colors">Mission</a></li>
+                        <li><a href="#" class="hover:text-yellow-200 transition-colors">Centers</a></li>
+                        <li><a href="#" class="hover:text-yellow-200 transition-colors">Programs</a></li>
+                        <li><a href="#" class="hover:text-yellow-200 transition-colors">Privacy Policy</a></li>
+                        <li><a href="#" class="hover:text-yellow-200 transition-colors">Terms and Conditions</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Contact -->
+                <div>
+                    <h3 class="font-semibold mb-4">Contact Us</h3>
+                    <div class="space-y-2 text-sm">
+                        <p>Blk 2 Lot 12, Brgy Sapul, Famy, Laguna</p>
+                        <p>Manila, Philippines</p>
+                        <p class="flex items-center"><i class="fas fa-phone mr-2"></i> +63 917 123 7890</p>
+                        <p class="flex items-center"><i class="fas fa-envelope mr-2"></i> info@tahananngpagmamahal.org</p>
+                    </div>
+                    
+                    <div class="mt-6">
+                        <h4 class="font-semibold mb-2">Follow Us</h4>
+                        <a href="#" class="text-white hover:text-yellow-200 transition-colors">
+                            <i class="fab fa-facebook text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Map -->
+                 <h3 class="font-semibold mb-4">Where To Find Us</h3>
+                <div class="bg-gray-300 rounded-lg w-full h-32 md:h-40 flex items-center justify-center overflow-hidden">
+                <div class="bg-gray-300 rounded-lg w-full h-32 md:h-40 flex items-center justify-center overflow-hidden">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3861.601463040205!2d121.07442487755495!3d14.564768585917426!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3397c878316203bd%3A0x87749c3b5152b1ea!2sTahanan%20ng%20Pagmamahal%20Children%E2%80%99s%20Home%2C%20Inc.!5e0!3m2!1sen!2sph!4v1758197953123!5m2!1sen!2sph" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+            </div>
+            </div>
+            
+            <div class="border-t border-yellow-500 mt-8 pt-8 text-center text-sm">
+                <p>Copyright © 2025 Tahanan ng Pagmamahal</p>
+                <p>Website developed by: </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const overlay = document.getElementById('mobile-menu-overlay');
+            
+            if (menu.classList.contains('translate-x-full')) {
+                // Show menu
+                menu.classList.remove('translate-x-full');
+                menu.classList.add('translate-x-0');
+                overlay.classList.remove('hidden');
+            } else {
+                // Hide menu
+                menu.classList.add('translate-x-full');
+                menu.classList.remove('translate-x-0');
+                overlay.classList.add('hidden');
+            }
+        }
+        
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const menu = document.getElementById('mobile-menu');
+            const overlay = document.getElementById('mobile-menu-overlay');
+            const button = event.target.closest('button');
+            
+            if (!button && !menu.contains(event.target) && !menu.classList.contains('translate-x-full')) {
+                menu.classList.add('translate-x-full');
+                menu.classList.remove('translate-x-0');
+                overlay.classList.add('hidden');
+            }
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
