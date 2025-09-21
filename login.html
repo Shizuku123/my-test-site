@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Tahanan ng Pagmamahal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brand-red': '#dc2626',
+                        'brand-orange': '#ea580c'
+                    },
+                    fontFamily: {
+                        'poppins': ['Poppins', 'sans-serif']
+                    }
+                }
+            }   
+        }
+
+        function toggleForm() {
+            const signInForm = document.getElementById('signInContainer');
+            const signUpForm = document.getElementById('signUpForm');
+            const welcomeText = document.getElementById('welcomeText');
+
+            if (signUpForm.classList.contains('hidden')) {
+                // hide sign in
+                signInForm.classList.remove('visible');
+                welcomeText.classList.remove('opacity-100');
+                welcomeText.classList.add('opacity-0');
+
+                setTimeout(() => {
+                    signInForm.classList.add('hidden');
+                    signUpForm.classList.remove('hidden');
+                    setTimeout(() => {
+                        signUpForm.classList.add('visible');
+                        welcomeText.classList.remove('opacity-0');
+                        welcomeText.classList.add('opacity-100');
+                    }, 10);
+                }, 300); // matches transition duration
+            } else {
+                // hide sign up
+                signUpForm.classList.remove('visible');
+                welcomeText.classList.remove('opacity-100');
+                welcomeText.classList.add('opacity-0');
+
+                setTimeout(() => {
+                    signUpForm.classList.add('hidden');
+                    signInForm.classList.remove('hidden');
+                    setTimeout(() => {
+                        signInForm.classList.add('visible');
+                        welcomeText.classList.remove('opacity-0');
+                        welcomeText.classList.add('opacity-100');
+                    }, 10);
+                }, 300);
+            }
+        }
+
+
+            // On page load, animate the login container
+            window.addEventListener('DOMContentLoaded', () => {
+                const signInForm = document.getElementById('signInContainer');
+                setTimeout(() => signInForm.classList.add('visible'), 10);
+            });
+
+            window.addEventListener("DOMContentLoaded", () => {
+            const welcomeText = document.getElementById("welcomeText");
+            // trigger fade-in
+            setTimeout(() => {
+            welcomeText.classList.remove("opacity-0");
+            welcomeText.classList.add("opacity-100");
+                }, 100); 
+            });
+
+            // Terms Modal logic
+        function showTermsModal() {
+        document.getElementById('termsModal').classList.remove('hidden');
+        document.body.classList.add('overflow-hidden');
+        }
+
+        function closeTermsModal() {
+        document.getElementById('termsModal').classList.add('hidden');
+        document.body.classList.remove('overflow-hidden');
+        }
+
+        function proceedToOTP() {
+        // Optionally, pass email as query param
+        window.location.href = 'otp-verification.html';
+        }
+
+        // Enable Continue button only if both checkboxes are checked
+        document.addEventListener('DOMContentLoaded', function() {
+        const terms = document.getElementById('acceptTerms');
+        const email = document.getElementById('acceptEmail');
+        const btn = document.getElementById('continueBtn');
+        if (terms && email && btn) {
+            function updateBtn() {
+            btn.disabled = !(terms.checked && email.checked);
+            }
+            terms.addEventListener('change', updateBtn);
+            email.addEventListener('change', updateBtn);
+        }
+        });
+
+        function scrollToAgreement(id) {
+        const container = document.getElementById('termsContent');
+        const target = document.getElementById(id);
+        if (container && target) {
+            // Calculate offset so the title is at the very top of the container
+            const offset = target.offsetTop - container.offsetTop;
+            container.scrollTo({
+                top: offset,
+                behavior: 'smooth'
+            });
+        }
+        }
+        function validateSignUp() {
+            // Find the sign up form fields
+            var form = document.querySelector('#signUpForm form');
+            var errorDiv = document.getElementById('signUpError');
+            var firstName = form.querySelector('input[placeholder="First name"]');
+            var lastName = form.querySelector('input[placeholder="Last name"]');
+            var email = form.querySelector('input[type="email"]');
+            var password = form.querySelector('input[placeholder="Create password"]');
+            var confirmPassword = form.querySelector('input[placeholder="Confirm password"]');
+            var passwordReqDiv = document.getElementById('passwordRequirements');
+
+            // Remove previous error styles
+            [firstName, lastName, email, password, confirmPassword].forEach(function(input) {
+                input.classList.remove('border-red-500', 'focus:border-red-500', 'ring-red-500');
+            });
+            errorDiv.classList.add('hidden');
+            errorDiv.textContent = '';
+            passwordReqDiv.textContent = '';
+            passwordReqDiv.classList.remove('text-red-600');
+
+            let hasError = false;
+
+            // Check all fields filled
+            if (!firstName.value.trim()) {
+                firstName.classList.add('border-red-500', 'focus:border-red-500', 'ring-red-500');
+                hasError = true;
+            }
+            if (!lastName.value.trim()) {
+                lastName.classList.add('border-red-500', 'focus:border-red-500', 'ring-red-500');
+                hasError = true;
+            }
+            if (!email.value.trim()) {
+                email.classList.add('border-red-500', 'focus:border-red-500', 'ring-red-500');
+                hasError = true;
+            }
+            if (!password.value.trim()) {
+                password.classList.add('border-red-500', 'focus:border-red-500', 'ring-red-500');
+                hasError = true;
+            }
+            if (!confirmPassword.value.trim()) {
+                confirmPassword.classList.add('border-red-500', 'focus:border-red-500', 'ring-red-500');
+                hasError = true;
+            }
+            if (hasError) {
+                errorDiv.textContent = 'Please fill in all fields.';
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+
+            // Email format
+            var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailPattern.test(email.value.trim())) {
+                email.classList.add('border-red-500', 'focus:border-red-500', 'ring-red-500');
+                errorDiv.textContent = 'Please enter a valid email address.';
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+
+            // Password requirements: at least 1 uppercase and 1 number
+            var pw = password.value;
+            var pwValid = /[A-Z]/.test(pw) && /[0-9]/.test(pw);
+            if (!pwValid) {
+                password.classList.add('border-red-500', 'focus:border-red-500', 'ring-red-500');
+                passwordReqDiv.textContent = 'Password is weak: must contain at least one uppercase letter and one number.';
+                passwordReqDiv.classList.add('text-red-600');
+                errorDiv.textContent = 'Password is too weak.';
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+
+            // Password match
+            if (password.value !== confirmPassword.value) {
+                password.classList.add('border-red-500', 'focus:border-red-500', 'ring-red-500');
+                confirmPassword.classList.add('border-red-500', 'focus:border-red-500', 'ring-red-500');
+                errorDiv.textContent = 'Passwords do not match.';
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+
+            // If all valid, show terms modal
+            showTermsModal();
+
+            // Remove red border on input
+            document.addEventListener('DOMContentLoaded', function() {
+                var form = document.querySelector('#signUpForm form');
+                if (form) {
+                    var inputs = form.querySelectorAll('input');
+                    inputs.forEach(function(input) {
+                        input.addEventListener('input', function() {
+                            input.classList.remove('border-red-500', 'focus:border-red-500', 'ring-red-500');
+                        });
+                    });
+                }
+            });
+        }
+
+        // Live password feedback for strength
+        var pwInput = document.getElementById('signUpPassword');
+        var pwReq = document.getElementById('passwordRequirements');
+        if (pwInput && pwReq) {
+            pwInput.addEventListener('input', function() {
+                var val = pwInput.value;
+                if (!val) {
+                    pwReq.textContent = '';
+                    pwReq.classList.remove('text-red-600');
+                    return;
+                }
+                var valid = /[A-Z]/.test(val) && /[0-9]/.test(val);
+                if (!valid) {
+                    pwReq.textContent = 'Password is weak: must contain at least one uppercase letter and one number.';
+                    pwReq.classList.add('text-red-600');
+                } else {
+                    pwReq.textContent = '';
+                    pwReq.classList.remove('text-red-600');
+                }
+            });
+        }
+    </script>
+    <style>
+        .slide-up {
+        opacity: 0;
+        transform: translateY(40px);
+        transition: opacity 0.5s cubic-bezier(.4,0,.2,1), transform 0.5s cubic-bezier(.4,0,.2,1);
+        }
+        .slide-up.visible {
+        opacity: 1;
+        transform: translateY(0);
+        }
+        .custom-checkbox:checked {
+        accent-color: #22c55e; /* Tailwind green-500 */
+        border-color: #22c55e;
+        }
+        
+    </style>
+</head>
+<a href="index.html" class="absolute top-6 left-6 flex items-center text-gray-400 hover:text-brand-red transition-colors text-sm font-medium">
+    <svg class="h-5 w-5 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+    </svg>
+    Back
+</a>
+<body class="font-poppins bg-gray-50 min-h-screen">
+    <!-- Minimalist design with clean white background and subtle branding -->
+    <div class="min-h-screen flex items-center justify-center px-4 py-8">
+    <div class="w-full max-w-sm">
+            <!-- Logo and branding -->
+            <div class="text-center mb-8 opacity-0 transition-opacity duration-1000" id="welcomeText">
+            <h1 class="text-2xl font-semibold text-gray-900 mb-2">Welcome Back</h1>
+            <p class="text-gray-600 text-sm">Sign in to your account</p>
+            </div>
+            <!-- Login Form -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 slide-up" id="signInContainer">
+<form id="loginForm">
+    <div class="mb-4">
+      <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+      <input type="email" id="loginEmail" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-red focus:ring-1 focus:ring-brand-red focus:outline-none transition-colors" placeholder="Enter your email" required>
+    </div>
+    <div class="mb-4">
+      <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+      <input type="password" id="loginPassword" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-red focus:ring-1 focus:ring-brand-red focus:outline-none transition-colors" placeholder="Enter your password" required>
+    </div>
+    <div id="loginError" class="text-red-600 text-sm mb-2 hidden"></div>
+    <button type="submit" class="w-full bg-brand-red hover:bg-brand-orange text-white py-3 rounded-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-brand-red focus:ring-offset-2">
+      Log In
+    </button>
+  </form>
+
+                <!-- Divider -->
+                <div class="my-6">
+                    <div class="relative">
+                        <div class="absolute inset-0 flex items-center">
+                            <div class="w-full border-t border-gray-200"></div>
+                        </div>
+                        <div class="relative flex justify-center text-sm">
+                            <span class="px-2 bg-white text-gray-500">Don't have an account?</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sign Up Link -->
+                <div class="text-center">
+                    <button 
+                        onclick="toggleForm()" 
+                        onclick="validateSignUp()"
+                        class="text-brand-red hover:text-brand-orange font-medium transition-colors"
+                    >
+                        Create an account
+                    </button>
+                </div>
+            </div>
+
+            <!-- Sign Up Form (Hidden by default) -->
+            <div id="signUpForm" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 hidden slide-up">
+                <div class="text-center mb-6">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-2">Create Account</h2>
+                    <p class="text-gray-600 text-sm">Join our mission of love and care</p>
+                </div>
+
+                <form class="space-y-6">
+                    <!-- Name Fields -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">First Name</label>
+                            <input 
+                                type="text" 
+                                class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-red focus:ring-1 focus:ring-brand-red focus:outline-none transition-colors"
+                                placeholder="First name"
+                            >
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
+                            <input 
+                                type="text" 
+                                class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-red focus:ring-1 focus:ring-brand-red focus:outline-none transition-colors"
+                                placeholder="Last name"
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Email Field -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                        <input 
+                            type="email" 
+                            class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-red focus:ring-1 focus:ring-brand-red focus:outline-none transition-colors"
+                            placeholder="Enter your email"
+                            required
+                        >
+                    </div>
+
+                    <!-- Password Fields -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                        <h6 class="text-[10px] text-gray-400">It must contain Uppercase and Number</h6>
+                        <input 
+                            type="password" 
+                            id="signUpPassword"
+                            class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-red focus:ring-1 focus:ring-brand-red focus:outline-none transition-colors"
+                            placeholder="Create password"
+                            required
+                        >
+                        <div id="passwordRequirements" class="text-xs mt-1 text-gray-500"></div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Confirm Password</label>
+                        <input 
+                            type="password" 
+                            class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-red focus:ring-1 focus:ring-brand-red focus:outline-none transition-colors"
+                            placeholder="Confirm password"
+                            required
+                        >
+                    </div>
+
+                    <!-- Sign Up Button -->
+                    <div id="signUpError" class="text-red-600 text-sm mb-2 hidden"></div>
+                    <button 
+                        type="button" 
+                        onclick="validateSignUp()" 
+                        class="w-full bg-brand-red hover:bg-brand-orange text-white py-3 rounded-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-brand-red focus:ring-offset-2"
+                    >
+                        Create Account
+                    </button>
+
+                    <!-- Terms Modal -->
+                    <div id="termsModal" class="fixed inset-0 z-50 flex items-center justify-center hidden">
+                    <div class="bg-white rounded-2xl shadow-lg max-w-lg w-full p-8 relative">
+                        <h2 id="termsTitle" class="text-xl font-semibold text-gray-900 mb-4">Terms and Conditions</h2>
+                        <div id="termsContent"class="text-gray-700 text-sm space-y-3 max-h-56 overflow-y-auto mb-4">
+                        <p><strong>By creating an account, you agree to provide accurate and truthful information.</strong></p>
+                        <p>All donations made through this platform are voluntary and non-refundable, except where required by law.</p>
+                        <p>Your account may be suspended or terminated if you misuse the platform, provide false information, or engage in fraudulent activity.</p>
+                        <p>We reserve the right to amend these Terms at any time. Continued use of your account constitutes acceptance of such changes.</p>
+                        <hr>
+                        <h3 id="emailAgreementTitle" class="font-semibold mt-2">Email Notification Agreement</h3>
+                        <p>By registering, you agree to receive donation confirmations and account-related notifications via email.</p>
+                        </div>
+                        <div class="text-gray-700 text-sm space-y-3 max-h-56 overflow-y-auto mb-4">
+                                                <label class="flex items-center text-sm text-gray-700 select-none">
+                                                    <input type="checkbox" id="acceptTerms" class="mr-2 rounded border-gray-300 custom-checkbox">
+                                                    <span style="cursor:pointer;" onclick="event.preventDefault();scrollToAgreement('termsTitle')">I agree to the Terms and Conditions</span>
+                                                </label>
+                                                <label class="flex items-center text-sm text-gray-700 select-none">
+                                                    <input type="checkbox" id="acceptEmail" class="mr-2 rounded border-gray-300 custom-checkbox">
+                                                    <span style="cursor:pointer;" onclick="event.preventDefault();scrollToAgreement('emailAgreementTitle')">I agree to receive email notifications</span>
+                                                </label>
+                        </div>
+                        <div class="flex justify-end gap-2">
+                        <button type="button" onclick="closeTermsModal()" class="px-4 py-2 rounded-lg text-gray-600 hover:text-brand-red transition-colors">Cancel</button>
+                        <button type="button" onclick="proceedToOTP()" id="continueBtn" class="px-4 py-2 rounded-lg bg-brand-red text-white font-medium hover:bg-brand-orange transition-colors disabled:bg-gray-300 disabled:text-gray-400" disabled>Continue</button>
+                        </div>
+                    </div>
+                    </div>
+                </form>
+
+                <!-- Back to Sign In -->
+                <div class="mt-6 text-center">
+                    <button 
+                        onclick="toggleForm()" 
+                        class="text-brand-red hover:text-brand-orange font-medium transition-colors"
+                    >
+                        Already have an account? Sign in
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+</body>
+
+<script type="module">
+import { auth, db } from './firebase-donor.js';
+import {
+  signInWithEmailAndPassword,
+  reload,
+} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+document.getElementById("loginForm").addEventListener("submit", async function(e) {
+  e.preventDefault();
+  const email = document.getElementById("loginEmail").value.trim();
+  const password = document.getElementById("loginPassword").value;
+  const errorDiv = document.getElementById("loginError");
+
+  errorDiv.classList.add('hidden');
+  errorDiv.textContent = '';
+
+  try {
+    // Sign in with Firebase Auth
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+
+    // Reload user to get latest emailVerified status
+    await reload(user);
+
+    // Get user profile from Firestore
+    const userDoc = await getDoc(doc(db, "users", user.uid));
+    if (!userDoc.exists()) {
+      errorDiv.textContent = "User profile not found.";
+      errorDiv.classList.remove('hidden');
+      return;
+    }
+    const userData = userDoc.data();
+
+    // Only allow Donor role to log in
+    if (userData.accountType !== "donor") {
+      errorDiv.textContent = "Only Donor accounts can log in here.";
+      errorDiv.classList.remove('hidden');
+      return;
+    }
+
+    // If donor and not verified, redirect to email verification page
+    if (!user.emailVerified) {
+      window.location.href = `otp-verification.html?email=${encodeURIComponent(email)}`;
+      return;
+    }
+
+    const notification = document.createElement('div');
+    notification.className = "fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 transform translate-x-full transition-transform duration-300";
+    notification.innerHTML = '<i class="fas fa-check-circle mr-2"></i>Login successful! Redirecting...';
+    document.body.appendChild(notification);
+    
+    // Slide in notification
+    setTimeout(() => {
+        notification.classList.remove('translate-x-full');
+    }, 100);
+    
+    // Remove notification and redirect
+    setTimeout(() => {
+        notification.classList.add('translate-x-full');
+        setTimeout(() => {
+            notification.remove();
+            window.location.href = "index.html";
+        }, 300);
+    }, 1500);
+    
+  } catch (error) {
+    errorDiv.textContent = error.message;
+    errorDiv.classList.remove('hidden');
+  }
+});
+</script>
+
+<script type="module">
+import { auth, db } from './firebase-donor.js';
+import { createUserWithEmailAndPassword, sendEmailVerification } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+import { doc, setDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+// Called when user clicks "Continue" in Terms modal
+window.proceedToOTP = async function() {
+  // Get form fields
+  const form = document.querySelector('#signUpForm form');
+  const firstName = form.querySelector('input[placeholder="First name"]').value.trim();
+  const lastName = form.querySelector('input[placeholder="Last name"]').value.trim();
+  const email = form.querySelector('input[type="email"]').value.trim();
+  const password = form.querySelector('input[placeholder="Create password"]').value;
+  const errorDiv = document.getElementById('signUpError');
+
+  errorDiv.classList.add('hidden');
+  errorDiv.textContent = '';
+
+  try {
+    // Create user in Firebase Auth
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+
+    // Send email verification
+    await sendEmailVerification(user);
+
+    // Save profile to Firestore
+    const userProfile = {
+      userId: user.uid,
+      firstName,
+      lastName,
+      email,
+      accountType: "donor",
+      dateCreated: new Date().toISOString(),
+      isEmailVerified: user.emailVerified,
+      status: "active",
+      profileImageUrl: "",
+      contactNumber: "",
+      address: "",
+      role: "Donor"
+    };
+    await setDoc(doc(db, "users", user.uid), userProfile);
+
+    // Show success and redirect to email verification page
+    closeTermsModal();
+    const notifDiv = document.createElement('div');
+    notifDiv.className = "fixed left-1/2 top-1/2 transform -translate-x-1/3 -translate-y-1/2 bg-white text-gray-800 px-8 py-6 rounded-xl shadow-lg z-50 text-center opacity-0 transition-all duration-500 flex flex-col items-center gap-3";
+    // Placeholder for GIF or icon
+    const iconDiv = document.createElement('div');
+    iconDiv.className = "mb-2 w-12 h-12 flex items-center justify-center";
+    // You can insert your <img> or icon here, e.g.:
+    iconDiv.innerHTML = '<img src="check.png" alt="Success" class="w-12 h-12">';
+    notifDiv.appendChild(iconDiv);
+
+    const msgDiv = document.createElement('div');
+    msgDiv.textContent = "Account created! Please verify your email.";
+    notifDiv.appendChild(msgDiv);
+
+    document.body.appendChild(notifDiv);
+    // Slide up animation
+    setTimeout(() => {
+        notifDiv.classList.add('opacity-100');
+        notifDiv.style.transform = 'translate(-50%, -50%)';
+    }, 10);
+    setTimeout(() => {
+        notifDiv.classList.remove('opacity-100');
+        notifDiv.style.transform = 'translate(-50%, 0)';
+        setTimeout(() => {
+            notifDiv.remove();
+            window.location.href = `otp-verification.html?email=${encodeURIComponent(email)}`;
+        }, 500);
+    }, 3000);
+  } catch (error) {
+    errorDiv.textContent = error.message;
+    errorDiv.classList.remove('hidden');
+    closeTermsModal();
+  }
+};
+</script>
+
+</html>

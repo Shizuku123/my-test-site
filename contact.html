@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - Tahanan ng Pagmamahal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'poppins': ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        'brand-red': '#dc2626',
+                        'brand-orange': '#ea580c',
+                        'brand-yellow': '#d97706',
+                        'brand-blue': '#1e40af',
+                        'brand-navy': '#1e3a8a',
+                    }
+                }
+            }
+        }
+    </script>
+    <script type="module">
+
+import { auth, db } from './firebase-donor.js';
+import { doc, updateDoc, getDoc, increment } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+import { signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+let authStateLoaded = false;
+
+document.addEventListener('DOMContentLoaded', () => {
+    auth.onAuthStateChanged(async (user) => {
+        const loginSection = document.getElementById('loginSection');
+        const userWelcomeSection = document.getElementById('userWelcomeSection');
+        const userName = document.getElementById('userName');
+        const mobileUserSection = document.getElementById('mobileUserSection');
+        const mobileUserName = document.getElementById('mobileUserName');
+        const donationHistoryLink = document.getElementById('donationHistoryLink');
+        const logoutLink = document.getElementById('logoutLink');
+
+        if (!authStateLoaded) {
+            await new Promise(resolve => setTimeout(resolve, 800)); // 800ms delay
+            authStateLoaded = true;
+        }
+
+        if (user && user.emailVerified) {
+            // Get user profile
+            const userRef = doc(db, "users", user.uid);
+            const userDoc = await getDoc(userRef);
+            if (userDoc.exists()) {
+                const userData = userDoc.data();
+                // Update visit tracking
+                await updateDoc(userRef, {
+                    lastVisit: new Date().toISOString(),
+                    visitCount: increment(1)
+                });
+                // Show user welcome section with animation
+                if (userData.firstName) {
+                    if (userName) userName.textContent = userData.firstName;
+                    if (mobileUserName) mobileUserName.textContent = userData.firstName;
+                    if (mobileUserSection) mobileUserSection.classList.remove('hidden');
+                    if (loginSection) loginSection.classList.add('hidden');
+                    if (userWelcomeSection) {
+                        userWelcomeSection.classList.remove('hidden');
+                        setTimeout(() => {
+                            userWelcomeSection.classList.add('visible');
+                        }, 200);
+                    }
+                    // Show donation history and log out links
+                    if (donationHistoryLink) donationHistoryLink.classList.remove('hidden');
+                    if (logoutLink) logoutLink.classList.remove('hidden');
+                }
+            }
+        } else {
+            if (loginSection) {
+                loginSection.classList.remove('auth-loading');
+                loginSection.classList.remove('hidden');
+            }
+            if (userWelcomeSection) {
+                userWelcomeSection.classList.add('hidden');
+                userWelcomeSection.classList.remove('visible');
+            }
+            if (mobileUserSection) mobileUserSection.classList.add('hidden');
+            // Hide donation history and log out links
+            if (donationHistoryLink) donationHistoryLink.classList.add('hidden');
+            if (logoutLink) logoutLink.classList.add('hidden');
+        }
+    });
+});
+
+window.handleLogout = function() {
+    const showLogoutAlert = (message, isError = false) => {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[90vw] max-w-sm bg-${isError ? 'red' : 'green'}-500 text-white px-6 py-4 rounded-lg shadow-lg z-50 transition-all duration-300 opacity-0 translate-y-8`;
+        alertDiv.innerHTML = `<i class="fas fa-${isError ? 'exclamation-circle' : 'check-circle'} mr-2"></i>${message}`;
+        document.body.appendChild(alertDiv);
+
+        setTimeout(() => {
+            alertDiv.classList.remove('opacity-0', 'translate-y-8');
+            alertDiv.classList.add('opacity-100', 'translate-y-0');
+        }, 100);
+
+        setTimeout(() => {
+            alertDiv.classList.remove('opacity-100', 'translate-y-0');
+            alertDiv.classList.add('opacity-0', 'translate-y-8');
+            setTimeout(() => {
+            alertDiv.remove();
+            }, 300);
+        }, 2000);
+        };
+
+        const confirmDiv = document.createElement('div');
+        confirmDiv.className = "fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[90vw] max-w-md bg-white text-gray-900 px-6 py-6 rounded-lg shadow-lg z-50 transition-all duration-300 opacity-0 translate-y-8 flex flex-col items-center";
+    confirmDiv.innerHTML = `
+        <span class="mb-2"><i class="fas fa-sign-out-alt mr-2 text-brand-red"></i>Are you sure you want to log out?</span>
+        <div class="flex gap-4">
+            <button id="confirmLogoutBtn" class="bg-brand-red hover:bg-brand-orange text-white px-4 py-2 rounded">Log out</button>
+            <button id="cancelLogoutBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-900 px-4 py-2 rounded">Cancel</button>
+        </div>
+    `;
+    document.body.appendChild(confirmDiv);
+
+    setTimeout(() => {
+        confirmDiv.classList.remove('opacity-0', 'translate-y-8');
+        confirmDiv.classList.add('opacity-100', 'translate-y-0');
+    }, 100);
+
+    document.getElementById('confirmLogoutBtn').onclick = function() {
+        signOut(auth).then(() => {
+            confirmDiv.remove();
+            showLogoutAlert('Successfully logged out!');
+            setTimeout(() => {
+                window.location.reload();
+            }, 2200);
+        }).catch((error) => {
+            confirmDiv.remove();
+            showLogoutAlert('Error logging out. Please try again.', true);
+        });
+    };
+    document.getElementById('cancelLogoutBtn').onclick = function() {
+        confirmDiv.classList.remove('opacity-100', 'translate-y-0');
+        confirmDiv.classList.add('opacity-0', 'translate-y-8');
+        setTimeout(() => {
+            confirmDiv.remove();
+        }, 300);
+    };
+};
+</script>
+</head>
+<body class="font-poppins bg-white">
+   <!-- Desktop user welcome section -->
+    <div id="userWelcomeSection" class="user-welcome hidden">
+    <span hidden>Welcome back, <span id="userName"></span>!</span>
+    </div>
+    <!-- Header -->
+    <header class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <img src="tahanan-logo.png" alt="Tahanan ng Pagmamahal" class="h-12">
+                </div>
+                
+                <!-- Navigation -->
+                <nav class="hidden md:flex space-x-8">
+                    <a href="index.html" class="text-gray-700 hover:text-brand-red transition-colors">Home</a>
+                    <a href="about-us.html" class="text-gray-700 hover:text-brand-red transition-colors">About Us</a>
+                    <a href="#" class="text-gray-700 hover:text-brand-red transition-colors">Contact</a>
+                    <a href="#" class="text-gray-700 hover:text-brand-red transition-colors">Donate</a>
+                </nav>
+                
+                <!-- Mobile menu button -->
+                <button class="md:hidden p-2" onclick="toggleMobileMenu()">
+                    <i class="fas fa-bars text-gray-700"></i>
+                </button>
+            </div>
+            
+            <!-- Enhanced mobile navigation with better responsiveness -->
+            <div id="mobile-menu-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden transition-opacity duration-300" onclick="toggleMobileMenu()"></div>
+            <div id="mobile-menu" class="fixed top-0 right-0 h-full w-80 bg-white shadow-xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out">
+                <div class="flex justify-between items-center p-4 border-b">
+                    <h2 class="text-lg font-semibold text-gray-700">Menu</h2>
+                    <button onclick="toggleMobileMenu()" class="p-2">
+                        <i class="fas fa-times text-gray-700"></i>
+                    </button>
+                </div>
+                <div class="flex flex-col p-4">
+                    <!-- Enhanced user profile section with better mobile visibility -->
+                    <div id="mobileUserSection" class="hidden mb-4 pb-4 border-b border-gray-200">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-10 h-10 bg-brand-red rounded-full flex items-center justify-center">
+                                <i class="fas fa-user text-white"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-500">Welcome back,</p>
+                                <p id="mobileUserName" class="font-semibold text-gray-900"></p>
+                            </div>
+                        </div>
+                        <a href="profile.html" class="flex items-center text-brand-red hover:text-brand-orange transition-colors py-2">
+                            <i class="fas fa-user-circle mr-3"></i> My Profile
+                        </a>
+                    </div>
+                    
+                    <a href="index.html" class="text-gray-700 hover:text-brand-red transition-colors py-3 border-b border-gray-100">Home</a>
+                    <a href="about-us.html" class="text-gray-700 hover:text-brand-red transition-colors py-3 border-b border-gray-100">About Us</a>
+                    <a href="#" class="text-gray-700 hover:text-brand-red transition-colors py-3 border-b border-gray-100">Contact</a>
+                    <a href="donatelanding.html" class="text-gray-700 hover:text-brand-red transition-colors py-3 border-b border-gray-100">Donate</a>
+                    <a id="donationHistoryLink" href="donatelanding.html" class="text-gray-700 hover:text-brand-red transition-colors py-3 border-b border-gray-100 hidden">Donation History</a>
+                    <a id="logoutLink" href="#" onclick="handleLogout()" class="text-gray-700 hover:text-brand-red transition-colors py-3 hidden">Log out</a>
+                    <script>
+                        // Show/hide donation history and logout based on auth state
+                        document.addEventListener('DOMContentLoaded', function() {
+                            if (window.auth) {
+                                auth.onAuthStateChanged(function(user) {
+                                    const donationHistoryLink = document.getElementById('donationHistoryLink');
+                                    const logoutLink = document.getElementById('logoutLink');
+                                    if (user && user.emailVerified) {
+                                        donationHistoryLink.classList.remove('hidden');
+                                        logoutLink.classList.remove('hidden');
+                                    } else {
+                                        donationHistoryLink.classList.add('hidden');
+                                        logoutLink.classList.add('hidden');
+                                    }
+                                });
+                            }
+                        });
+                    </script>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative h-96 flex items-center justify-center bg-gradient-to-r from-gray-800 to-gray-600 slide-up"
+        style="background-image: url('pic10.jpg'); background-size: cover; background-position: center;">
+        <div class="absolute inset-0 bg-black opacity-40"></div>
+        <div class="relative z-10 text-center">
+            <h1 class="text-4xl md:text-6xl font-bold text-white mb-4">Contact Us</h1>
+        </div>
+    </section>
+
+    <!-- Where to Find Us Section -->
+    <section class="py-16 bg-gray-50 slide-up">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">Where to Find Us</h2>
+                <div class="w-16 h-1 bg-brand-orange mx-auto"></div>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <!-- Building Image -->
+                <div class="order-2 lg:order-1 slide-up">
+                    <img src="pic20.jpg" 
+                         alt="Tahanan ng Pagmamahal Building" 
+                         class="w-full h-80 object-cover rounded-lg shadow-md">
+                </div>
+
+                <!-- Contact Information -->
+                <div class="order-1 lg:order-2 space-y-8 slide-up">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">ADDRESS</h3>
+                        <p class="text-gray-600">61 Dr. Pilapil St., Brgy. Ugong, Pasig, Metro Manila, Philippines</p>
+                    </div>
+
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">BUSINESS HOURS</h3>
+                        <p class="text-gray-600">Monday - Sunday</p>
+                        <p class="text-gray-600">8:00 AM - 5:00 PM</p>
+                    </div>
+
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">CONTACT NO.</h3>
+                        <p class="text-gray-600">+632 8631 7748</p>
+                        <p class="text-gray-600">+63 917 523 7748</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Map Section -->
+    <section class="py-8 bg-white slide-up">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-gray-200 h-96 rounded-lg flex items-center justify-center">
+                <div class="text-center w-full h-full flex items-center justify-center">
+                    <div class="w-full h-full flex items-center justify-center">
+                        <iframe 
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3861.601463040205!2d121.07442487755495!3d14.564768585917426!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3397c878316203bd%3A0x87749c3b5152b1ea!2sTahanan%20ng%20Pagmamahal%20Children%E2%80%99s%20Home%2C%20Inc.!5e0!3m2!1sen!2sph!4v1758197953123!5m2!1sen!2sph" 
+                            width="100%" 
+                            height="100%" 
+                            style="border:0;" 
+                            allowfullscreen="" 
+                            loading="lazy" 
+                            referrerpolicy="no-referrer-when-downgrade"
+                            class="rounded-lg w-full h-full"
+                        ></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Get In Touch Section -->
+    <section class="py-16 bg-white slide-up">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">Get In Touch</h2>
+            </div>
+
+            <form class="space-y-6 slide-up">
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <input type="text" 
+                               placeholder="Name" 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-orange focus:border-transparent outline-none transition-colors">
+                    </div>
+                    <div>
+                        <input type="email" 
+                               placeholder="Email Address" 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-orange focus:border-transparent outline-none transition-colors">
+                    </div>
+                </div>
+
+                <div>
+                    <input type="tel" 
+                           placeholder="Contact No." 
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-orange focus:border-transparent outline-none transition-colors">
+                </div>
+
+                <div>
+                    <textarea placeholder="Message" 
+                              rows="6" 
+                              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-orange focus:border-transparent outline-none transition-colors resize-vertical"></textarea>
+                </div>
+
+                <div class="text-center">
+                    <button type="submit" 
+                            class="bg-brand-red hover:bg-orange-600 text-white font-medium px-8 py-3 rounded-lg transition-colors">
+                        SUBMIT
+                    </button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-brand-red text-white py-12 slide-up">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8">
+                <!-- Organization Info -->
+                <div class="md:col-span-1">
+                    <div class="flex items-center space-x-2 mb-4">
+                        <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center">
+                            <svg class="w-5 h-5 text-brand-red" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <span class="font-semibold">TAHANAN NG PAGMAMAHAL</span>
+                    </div>
+                    <div class="text-sm space-y-1">
+                        <p>DSWD LICENSE:</p>
+                        <p>RCCG-00-2018-0001</p>
+                        <p>DSWD ACCREDITATION:</p>
+                        <p>DSWD-SB-A-00-2018-0001</p>
+                        <p>DOH LICENSE:</p>
+                        <p>LTO No. RO-00-0001-18</p>
+                        <p>PCNC ACCREDITATION: TN</p>
+                    </div>
+                </div>
+
+                <!-- About -->
+                <div>
+                    <h3 class="font-semibold mb-4">About</h3>
+                    <ul class="text-sm space-y-2">
+                        <li><a href="#" class="hover:text-yellow-200 transition-colors">About Us</a></li>
+                        <li><a href="#" class="hover:text-yellow-200 transition-colors">Causes</a></li>
+                        <li><a href="#" class="hover:text-yellow-200 transition-colors">Programs</a></li>
+                        <li><a href="#" class="hover:text-yellow-200 transition-colors">Privacy Policy</a></li>
+                        <li><a href="#" class="hover:text-yellow-200 transition-colors">Terms and Conditions</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact Us -->
+                <div>
+                    <h3 class="font-semibold mb-4">Contact Us</h3>
+                    <div class="text-sm space-y-2">
+                        <p>61 Dr. Pilapil St., Brgy. Ugong, Pasig, Metro Manila, Philippines</p>
+                        <p>+632 8631 7748</p>
+                        <p>+63 917 523 7748</p>
+                        <p>info@tahananngpagmamahal.com</p>
+                    </div>
+                    <div class="mt-4">
+                        <h4 class="font-medium mb-2">Follow Us</h4>
+                        <a href="#" class="inline-block w-8 h-8 bg-blue-600 rounded text-center leading-8 hover:bg-blue-700 transition-colors">
+                            <span class="text-xs">f</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Where To Find Us -->
+                <div>
+                    <h3 class="font-semibold mb-4">Where To Find Us</h3>
+                    <div class="bg-gray-200 h-32 rounded flex items-center justify-center overflow-hidden">
+                        <div class="w-full h-full flex items-center justify-center">
+                            <iframe 
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3861.601463040205!2d121.07442487755495!3d14.564768585917426!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3397c878316203bd%3A0x87749c3b5152b1ea!2sTahanan%20ng%20Pagmamahal%20Children%E2%80%99s%20Home%2C%20Inc.!5e0!3m2!1sen!2sph!4v1758197953123!5m2!1sen!2sph" 
+                                width="100%" 
+                                height="100%" 
+                                style="border:0;" 
+                                allowfullscreen="" 
+                                loading="lazy" 
+                                referrerpolicy="no-referrer-when-downgrade"
+                                class="rounded w-full h-full"
+                            ></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-t border-orange-400 mt-8 pt-8 text-center text-sm">
+                <p>Copyright © 2024 Tahanan ng Pagmamahal</p>
+                <p>All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <style>
+        html, body { overflow-x: hidden; }
+        body { font-family: 'Poppins', sans-serif; }
+
+        .slide-up { opacity: 0; transform: translateY(40px); transition: opacity 0.7s cubic-bezier(.4,0,.2,1), transform 0.7s cubic-bezier(.4,0,.2,1); }
+        .slide-up.visible { opacity: 1; transform: translateY(0); }
+    </style>
+    <script>
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const overlay = document.getElementById('mobile-menu-overlay');
+            
+            if (menu.classList.contains('translate-x-full')) {
+                // Show menu
+                menu.classList.remove('translate-x-full');
+                menu.classList.add('translate-x-0');
+                overlay.classList.remove('hidden');
+                // Prevent body scroll when menu is open
+                document.body.style.overflow = 'hidden';
+            } else {
+                // Hide menu
+                menu.classList.add('translate-x-full');
+                menu.classList.remove('translate-x-0');
+                overlay.classList.add('hidden');
+                // Restore body scroll
+                document.body.style.overflow = '';
+            }
+        }
+        
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const menu = document.getElementById('mobile-menu');
+            const overlay = document.getElementById('mobile-menu-overlay');
+            const button = event.target.closest('button');
+            
+            if (!button && !menu.contains(event.target) && !menu.classList.contains('translate-x-full')) {
+                menu.classList.add('translate-x-full');
+                menu.classList.remove('translate-x-0');
+                overlay.classList.add('hidden');
+                document.body.style.overflow = '';
+            }
+        });
+
+        window.addEventListener('resize', function() {
+            const menu = document.getElementById('mobile-menu');
+            const overlay = document.getElementById('mobile-menu-overlay');
+            
+            // Close mobile menu on desktop view
+            if (window.innerWidth >= 768) {
+                menu.classList.add('translate-x-full');
+                menu.classList.remove('translate-x-0');
+                overlay.classList.add('hidden');
+                document.body.style.overflow = '';
+            }
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+
+    <script>
+        // Slide-up animation
+        document.addEventListener("DOMContentLoaded", function() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.15 });
+
+            document.querySelectorAll('.slide-up').forEach(el => {
+                observer.observe(el);
+            });
+        });
+
+        // Mobile menu toggle
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('translate-x-full');
+        }
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const menu = document.getElementById('mobile-menu');
+            const menuButton = event.target.closest('button');
+            
+            if (!menu.contains(event.target) && !menuButton) {
+                menu.classList.add('translate-x-full');
+            }
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+    
+</body>
+</html>

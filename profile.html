@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - Tahanan ng Pagmamahal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brand-red': '#dc2626',
+                        'brand-orange': '#ea580c',
+                        'brand-yellow': '#d97706'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .slide-up {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.7s cubic-bezier(.4,0,.2,1), transform 0.7s cubic-bezier(.4,0,.2,1);
+        }
+
+        .slide-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .profile-card {
+            background: linear-gradient(135deg, #dc2626 0%, #ea580c 100%);
+        }
+
+        html, body { overflow-x: hidden; }
+        body { font-family: 'Poppins', sans-serif; }
+
+        .slide-up { opacity: 0; transform: translateY(40px); transition: opacity 0.7s cubic-bezier(.4,0,.2,1), transform 0.7s cubic-bezier(.4,0,.2,1); }
+        .slide-up.visible { opacity: 1; transform: translateY(0); }
+        .profile-card { background: linear-gradient(135deg, #dc2626 0%, #ea580c 100%); }
+
+        /* mobile menu larger screen */
+        #mobile-menu { width: 85vw; max-width: 85vw; }
+        @media (max-width: 768px) {
+            #mobile-menu { width: 70vw; max-width: 70vw; }
+        }
+    </style>
+</head>
+<body class="font-[Poppins] bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <a href="index.html" class="flex items-center">
+                        <img src="tahanan-logo.png" alt="Tahanan ng Pagmamahal" class="h-12">
+                    </a>
+                </div>
+                
+                <!-- Navigation -->
+                <nav class="hidden md:flex space-x-8">
+                    <a href="index.html" class="text-gray-700 hover:text-brand-red transition-colors">Home</a>
+                    <a href="#" class="text-gray-700 hover:text-brand-red transition-colors">About Us</a>
+                    <a href="#" class="text-gray-700 hover:text-brand-red transition-colors">Blog</a>
+                    <a href="#" class="text-gray-700 hover:text-brand-red transition-colors">Contact</a>
+                    <a href="#" class="text-gray-700 hover:text-brand-red transition-colors">Donate</a>
+                    <a href="profile.html" class="text-brand-red font-medium">Profile</a>
+                </nav>
+                
+                <!-- Mobile menu button -->
+                <button class="md:hidden p-2" onclick="toggleMobileMenu()">
+                    <i class="fas fa-bars text-gray-700"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Back Button -->
+        <div class="mb-6">
+            
+        </div>
+
+        <!-- Profile Header Card -->
+        <div class="profile-card rounded-2xl p-8 mb-8 text-white slide-up">
+            <div class="flex flex-col md:flex-row items-center md:items-start space-y-4 md:space-y-0 md:space-x-6">
+                <div class="w-24 h-24 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                    <i class="fas fa-user text-4xl text-white"></i>
+                </div>
+                <div class="text-center md:text-left flex-1">
+                    <h1 class="text-3xl font-bold mb-2">
+                        <span id="profileFullName">Loading...</span>
+                    </h1>
+                    <p class="text-white text-opacity-90 mb-1 hidden">
+                        <i class="fas fa-envelope mr-2"></i>
+                        <span id="profileEmail">Loading...</span>
+                    </p>
+                    <p class="text-white text-opacity-90 hidden">
+                        <i class="fas fa-heart mr-2"></i>
+                        Donor since <span id="profileJoinDate">Loading...</span>
+                    </p>
+                </div>
+                <div class="text-center">
+                   
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Information Grid -->
+        <div class="grid md:grid-cols-2 gap-8">
+            <!-- Account Information -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 slide-up">
+                <h2 class="text-xl font-semibold text-gray-900 mb-6 flex items-center">
+                    <i class="fas fa-user-circle text-brand-red mr-3"></i>
+                    Account Information
+                </h2>
+                
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center py-3 border-b border-gray-100">
+                        <span class="text-gray-600">First Name</span>
+                        <span id="profileFirstName" class="font-medium text-gray-900">Loading...</span>
+                    </div>
+                    <div class="flex justify-between items-center py-3 border-b border-gray-100">
+                        <span class="text-gray-600">Last Name</span>
+                        <span id="profileLastName" class="font-medium text-gray-900">Loading...</span>
+                    </div>
+                    <div class="flex justify-between items-center py-3 border-b border-gray-100">
+                        <span class="text-gray-600">Email Address</span>
+                        <span id="profileEmailDetail" class="font-medium text-gray-900">Loading...</span>
+                    </div>
+                    <div class="flex justify-between items-center py-3 border-b border-gray-100">
+                        <span class="text-gray-600">Account Type</span>
+                        <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+                            <i class="fas fa-heart mr-1"></i>
+                            Donor
+                        </span>
+                    </div>
+                    <div class="flex justify-between items-center py-3">
+                        <span class="text-gray-600">Email Verified</span>
+                        <span id="profileEmailVerified" class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+                            <i class="fas fa-check-circle mr-1"></i>
+                            Verified
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Account Activity -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 slide-up">
+                <h2 class="text-xl font-semibold text-gray-900 mb-6 flex items-center">
+                    <i class="fas fa-chart-line text-brand-red mr-3"></i>
+                    Account Activity
+                </h2>
+                
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center py-3 border-b border-gray-100">
+                        <span class="text-gray-600">Account Created</span>
+                        <span id="profileCreatedDate" class="font-medium text-gray-900">Loading...</span>
+                    </div>
+                    <div class="flex justify-between items-center py-3 border-b border-gray-100">
+                        <span class="text-gray-600">Last Visit</span>
+                        <span id="profileLastVisit" class="font-medium text-gray-900">Loading...</span>
+                    </div>
+                    <div class="flex justify-between items-center py-3 border-b border-gray-100">
+                        <span class="text-gray-600">Total Visits</span>
+                        <span id="profileVisitCount" class="font-medium text-gray-900">Loading...</span>
+                    </div>
+                    <div class="flex justify-between items-center py-3">
+                        <span class="text-gray-600">Account Status</span>
+                        <span id="profileStatus" class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+                            <i class="fas fa-check-circle mr-1"></i>
+                            Active
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Credentials Section -->
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mt-8 slide-up">
+            <h2 class="text-xl font-semibold text-gray-900 mb-6 flex items-center">
+                <i class="fas fa-certificate text-brand-red mr-3"></i>
+                Organization Credentials
+            </h2>
+            
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="space-y-4">
+                    <div class="flex items-start space-x-3 p-4 bg-gray-50 rounded-lg">
+                        <i class="fas fa-shield-alt text-brand-red mt-1"></i>
+                        <div>
+                            <h3 class="font-semibold text-gray-900">DSWD Registration</h3>
+                            <p class="text-sm text-gray-600">DSWD-NCR-RO-SLF-2021</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-3 p-4 bg-gray-50 rounded-lg">
+                        <i class="fas fa-certificate text-brand-red mt-1"></i>
+                        <div>
+                            <h3 class="font-semibold text-gray-900">DSWD License</h3>
+                            <p class="text-sm text-gray-600">DSWD-NCR-RO-L-2022-047</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="space-y-4">
+                    <div class="flex items-start space-x-3 p-4 bg-gray-50 rounded-lg">
+                        <i class="fas fa-award text-brand-red mt-1"></i>
+                        <div>
+                            <h3 class="font-semibold text-gray-900">DSWD Accreditation</h3>
+                            <p class="text-sm text-gray-600">DSWD-NCR-ACC-1-2023</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-3 p-4 bg-gray-50 rounded-lg">
+                        <i class="fas fa-file-alt text-brand-red mt-1"></i>
+                        <div>
+                            <h3 class="font-semibold text-gray-900">Public Solicitation Permit</h3>
+                            <p class="text-sm text-gray-600">DSWD-NCR-PSP-2024-0016</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-col sm:flex-row gap-4 mt-8 slide-up">
+            <button onclick="window.location.href='donatelanding.html'" class="flex-1 bg-brand-red hover:bg-brand-orange text-white font-semibold py-3 px-6 rounded-lg transition-colors">
+                <i class="fas fa-heart mr-2"></i>
+                Make a Donation
+            </button>
+            <button onclick="window.location.href='donatelanding.html'" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 px-6 rounded-lg transition-colors">
+                <i class="fas fa-history mr-2"></i>
+                Donation History
+            </button>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-red-600 text-white py-8 mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div class="mb-4">
+                <img src="images.png" alt="Tahanan ng Pagmamahal" class="h-12 mx-auto mb-4">
+            </div>
+            <p class="text-sm">Copyright © 2025 Tahanan ng Pagmamahal</p>
+        </div>
+    </footer>
+
+    <!-- Mobile menu overlay -->
+    <div id="mobile-menu-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden transition-opacity duration-300" onclick="toggleMobileMenu()"></div>
+    <!-- Mobile sidebar menu -->
+    <div id="mobile-menu" class="fixed top-0 right-0 h-full w-80 bg-white shadow-xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out">
+        <div class="flex justify-between items-center p-4 border-b">
+            <h2 class="text-lg font-semibold text-gray-700">Menu</h2>
+            <button onclick="toggleMobileMenu()" class="p-2">
+                <i class="fas fa-times text-gray-700"></i>
+            </button>
+        </div>
+        <div class="flex flex-col p-4">
+            <!-- Enhanced user profile section with better mobile visibility -->
+            <div id="mobileUserSection" class="hidden mb-4 pb-4 border-b border-gray-200">
+                <div class="flex items-center space-x-3 mb-3">
+                    <div class="w-10 h-10 bg-brand-red rounded-full flex items-center justify-center">
+                        <i class="fas fa-user text-white"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Welcome back,</p>
+                        <p id="mobileUserName" class="font-semibold text-gray-900"></p>
+                    </div>
+                </div>
+                <a href="profile.html" class="flex items-center text-brand-red hover:text-brand-orange transition-colors py-2">
+                    <i class="fas fa-user-circle mr-3"></i> My Profile
+                </a>
+            </div>
+            <a href="index.html" class="text-gray-700 hover:text-brand-red transition-colors py-3 border-b border-gray-100">Home</a>
+            <a href="#" class="text-gray-700 hover:text-brand-red transition-colors py-3 border-b border-gray-100">About Us</a>
+            <a href="#" class="text-gray-700 hover:text-brand-red transition-colors py-3 border-b border-gray-100">Blog</a>
+            <a href="#" class="text-gray-700 hover:text-brand-red transition-colors py-3 border-b border-gray-100">Contact</a>
+            <a href="donatelanding.html" class="text-gray-700 hover:text-brand-red transition-colors py-3 border-b border-gray-100">Donate</a>
+            <a id="donationHistoryLink" href="donatelanding.html" class="text-gray-700 hover:text-brand-red transition-colors py-3 border-b border-gray-100 hidden">Donation History</a>
+            <a id="logoutLink" href="#" onclick="handleLogout()" class="text-gray-700 hover:text-brand-red transition-colors py-3 hidden">Log out</a>
+        </div>
+    </div>
+
+    <script>
+        // Animation observer
+        document.addEventListener("DOMContentLoaded", function() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.15 });
+
+            document.querySelectorAll('.slide-up').forEach(el => {
+                observer.observe(el);
+            });
+        });
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const overlay = document.getElementById('mobile-menu-overlay');
+            if (menu.classList.contains('translate-x-full')) {
+                menu.classList.remove('translate-x-full');
+                menu.classList.add('translate-x-0');
+                overlay.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            } else {
+                menu.classList.add('translate-x-full');
+                menu.classList.remove('translate-x-0');
+                overlay.classList.add('hidden');
+                document.body.style.overflow = '';
+            }
+        }
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const menu = document.getElementById('mobile-menu');
+            const overlay = document.getElementById('mobile-menu-overlay');
+            const button = event.target.closest('button');
+            if (!button && !menu.contains(event.target) && !menu.classList.contains('translate-x-full')) {
+                menu.classList.add('translate-x-full');
+                menu.classList.remove('translate-x-0');
+                overlay.classList.add('hidden');
+                document.body.style.overflow = '';
+            }
+        });
+        window.addEventListener('resize', function() {
+            const menu = document.getElementById('mobile-menu');
+            const overlay = document.getElementById('mobile-menu-overlay');
+            if (window.innerWidth >= 768) {
+                menu.classList.add('translate-x-full');
+                menu.classList.remove('translate-x-0');
+                overlay.classList.add('hidden');
+                document.body.style.overflow = '';
+            }
+        });
+    </script>
+    <script type="module">
+    import { auth, db } from './firebase-donor.js';
+    import { doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+    import { signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+    // Check authentication and load profile data
+    auth.onAuthStateChanged(async (user) => {
+        if (!user || !user.emailVerified) {
+            // Redirect to login if not authenticated
+            window.location.href = 'login.html';
+            return;
+    }
+
+    try {
+        // Get user profile from Firestore
+        const userRef = doc(db, "users", user.uid);
+        const userDoc = await getDoc(userRef);
+        
+        if (userDoc.exists()) {
+            const userData = userDoc.data();
+            
+            // Populate profile information
+            document.getElementById('profileFullName').textContent = `${userData.firstName} ${userData.lastName}`;
+            document.getElementById('profileEmail').textContent = userData.email;
+            document.getElementById('profileFirstName').textContent = userData.firstName;
+            document.getElementById('profileLastName').textContent = userData.lastName;
+            document.getElementById('profileEmailDetail').textContent = userData.email;
+            
+            // Format dates
+            const joinDate = new Date(userData.dateCreated).toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long' 
+            });
+            document.getElementById('profileJoinDate').textContent = joinDate;
+            document.getElementById('profileCreatedDate').textContent = new Date(userData.dateCreated).toLocaleDateString();
+            
+            // Last visit
+            if (userData.lastVisit) {
+                document.getElementById('profileLastVisit').textContent = new Date(userData.lastVisit).toLocaleDateString();
+            } else {
+                document.getElementById('profileLastVisit').textContent = 'First visit';
+            }
+            
+            // Visit count
+            document.getElementById('profileVisitCount').textContent = userData.visitCount || 1;
+            
+            // Email verification status
+            const emailVerifiedElement = document.getElementById('profileEmailVerified');
+            if (user.emailVerified) {
+                emailVerifiedElement.innerHTML = '<i class="fas fa-check-circle mr-1"></i>Verified';
+                emailVerifiedElement.className = 'bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium';
+            } else {
+                emailVerifiedElement.innerHTML = '<i class="fas fa-exclamation-circle mr-1"></i>Not Verified';
+                emailVerifiedElement.className = 'bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-medium';
+            }
+            
+            // Account status
+            const statusElement = document.getElementById('profileStatus');
+            if (userData.status === 'active') {
+                statusElement.innerHTML = '<i class="fas fa-check-circle mr-1"></i>Active';
+                statusElement.className = 'bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium';
+            } else {
+                statusElement.innerHTML = '<i class="fas fa-pause-circle mr-1"></i>Inactive';
+                statusElement.className = 'bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-medium';
+            }
+            
+        } else {
+            console.error('User profile not found');
+            // Redirect to login if profile doesn't exist
+            window.location.href = 'login.html';
+        }
+    } catch (error) {
+        console.error('Error loading profile:', error);
+    }
+});
+
+window.handleLogout = function() {
+    // First confirmation
+    const firstConfirm = confirm("Are you sure you want to log out?");
+    
+    if (firstConfirm) {
+        // Second confirmation
+        const secondConfirm = confirm("This will end your current session and redirect you to the homepage. Are you absolutely sure you want to log out?");
+        
+        if (secondConfirm) {
+            // Proceed with logout
+            signOut(auth).then(() => {
+                // Show logout success message
+                const notification = document.createElement('div');
+                notification.className = "fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 transform translate-x-full transition-transform duration-300";
+                notification.innerHTML = '<i class="fas fa-check-circle mr-2"></i>Successfully logged out!';
+                document.body.appendChild(notification);
+                
+                // Slide in notification
+                setTimeout(() => {
+                    notification.classList.remove('translate-x-full');
+                }, 100);
+                
+                // Remove notification and redirect
+                setTimeout(() => {
+                    notification.classList.add('translate-x-full');
+                    setTimeout(() => {
+                        notification.remove();
+                        window.location.href = 'index.html'; // Redirect to homepage
+                    }, 300);
+                }, 2000);
+                
+            }).catch((error) => {
+                console.error('Logout error:', error);
+                alert('Error logging out. Please try again.');
+            });
+        }
+    }
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Verification - Tahanan ng Pagmamahal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brand-red': '#dc2626',
+                        'brand-orange': '#ea580c'
+                    },
+                    fontFamily: {
+                        'poppins': ['Poppins', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-poppins min-h-screen bg-white">
+<!-- Centered Email Verification Card with Slide Up Animation -->
+<div class="min-h-screen flex items-center justify-center bg-white px-4">
+    <div id="verificationCard" class="w-full max-w-md mx-auto flex flex-col items-center justify-center transform translate-y-16 opacity-0 transition-all duration-700">
+        <!-- Photo Container for Logo -->
+        <div class="mb-8 flex flex-col items-center">
+            <div class="w-32 h-32 rounded-full bg-white flex items-center justify-center mb-6">
+                <!-- Replace src below with your custom logo -->
+                <img src="sent-mail.gif" alt="Custom Logo" class="w-200 h-200 object-contain">
+            </div>
+            <h1 class="text-3xl font-semibold text-gray-900 mb-4">Verify your email</h1>
+            <p class="text-gray-600 text-lg mb-2 text-center">Please verify your email address by clicking on the verification link in the confirmation email</p>
+            <span class="text-gray-700 text-base mb-2 text-center">user@example.com</span>
+        </div>
+        <div class="text-center w-full mb-6">
+            <span class="text-gray-500 text-base">Resend email in <span id="timer" class="font-semibold">30s</span></span>
+        </div>
+        <div class="flex gap-4 w-full justify-center">
+            <div class="flex flex-col gap-6 w-full justify-center items-center">
+                <button id="resendEmailBtn" class="bg-brand-orange text-white w-80 h-16 rounded-lg font-medium transition-colors disabled:bg-gray-300 disabled:text-gray-400" disabled>
+                    Resend Email
+                </button>
+                <button id="verifiedBtn" class="bg-brand-red text-white w-80 h-16 rounded-lg font-medium transition-colors">
+                    I've verified my email
+                </button>
+            </div>
+        </div>
+        <a href="login.html" class="text-brand-red text-base underline mt-8 hover:text-red-700">Back to login</a>
+    </div>
+</div>
+<script>
+    // Slide up animation on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(function() {
+            const card = document.getElementById('verificationCard');
+            card.classList.remove('translate-y-16', 'opacity-0');
+            card.classList.add('translate-y-0', 'opacity-100');
+        }, 100);
+    });
+     // Get email from URL query parameter
+  function getQueryParam(name) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(name) || "user@example.com";
+  }
+  document.addEventListener('DOMContentLoaded', function() {
+    const emailSpan = document.querySelector('.text-gray-700.text-base');
+    if (emailSpan) {
+      emailSpan.textContent = getQueryParam('email');
+    }
+  });
+</script>
+
+    <script>
+      // Timer for Resend Email button
+      let timeLeft = 30;
+      let timerInterval;
+      const timerElement = document.getElementById('timer');
+      const resendBtn = document.getElementById('resendEmailBtn');
+
+      function startResendTimer() {
+        resendBtn.disabled = true;
+        timeLeft = 30;
+        timerElement.textContent = `${timeLeft}s`;
+        timerInterval = setInterval(() => {
+          timeLeft--;
+          timerElement.textContent = `${timeLeft}s`;
+          if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            resendBtn.disabled = false;
+            timerElement.textContent = "Ready";
+          }
+        }, 1000);
+      }
+
+      resendBtn.addEventListener('click', function() {
+        // Simulate resend email action
+        alert('Verification email resent!');
+        startResendTimer();
+      });
+
+            document.getElementById('verifiedBtn').addEventListener('click', async function() {
+                // Firebase logic to check and update verification status
+                try {
+                    // Import Firebase modules dynamically if not already imported
+                    if (!window.firebaseAuthLoaded) {
+                        await import('https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js');
+                        await import('https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js');
+                        window.firebaseAuthLoaded = true;
+                    }
+                    // Import from your firebase.js
+                      const module = await import('./firebase-donor.js');
+                    const auth = module.auth;
+                    const db = module.db;
+                    const { reload } = await import('https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js');
+                    const { doc, getDoc, updateDoc } = await import('https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js');
+                    // Get current user
+                    const user = auth.currentUser;
+                    if (!user) {
+                        // Show error notification (no redirect)
+                        const notifDiv = document.createElement('div');
+                        notifDiv.className = "fixed left-1/2 top-1/2 transform -translate-x-1/3 -translate-y-1/2 bg-white text-gray-800 px-8 py-6 rounded-xl shadow-lg z-50 text-center opacity-0 transition-all duration-500 flex flex-col items-center gap-3";
+                        const iconDiv = document.createElement('div');
+                        iconDiv.className = "mb-2 w-12 h-12 flex items-center justify-center";
+                        iconDiv.innerHTML = '<img src="cross.png" alt="Error" class="w-12 h-12">';
+                        notifDiv.appendChild(iconDiv);
+
+                        const msgDiv = document.createElement('div');
+                        msgDiv.textContent = "Please check your inbox and click the verification link.";
+                        notifDiv.appendChild(msgDiv);
+
+                        document.body.appendChild(notifDiv);
+                        setTimeout(() => {
+                            notifDiv.classList.add('opacity-100');
+                            notifDiv.style.transform = 'translate(-50%, -50%)';
+                        }, 10);
+                        setTimeout(() => {
+                            notifDiv.classList.remove('opacity-100');
+                            notifDiv.style.transform = 'translate(-50%, 0)';
+                            setTimeout(() => {
+                                notifDiv.remove();
+                            }, 500);
+                        }, 3000);
+                        return;
+                    }
+                    await reload(user);
+                    if (user.emailVerified) {
+                        // Find user profile in Firestore by user.uid
+                        const userRef = doc(db, 'users', user.uid);
+                        const userSnap = await getDoc(userRef);
+                        if (userSnap.exists()) {
+                            await updateDoc(userRef, { isEmailVerified: true });
+                            // Show success notification and redirect to homepage
+                            const notifDiv = document.createElement('div');
+                            notifDiv.className = "fixed left-1/2 top-1/2 transform -translate-x-1/3 -translate-y-1/2 bg-white text-gray-800 px-8 py-6 rounded-xl shadow-lg z-50 text-center opacity-0 transition-all duration-500 flex flex-col items-center gap-3";
+                            const iconDiv = document.createElement('div');
+                            iconDiv.className = "mb-2 w-12 h-12 flex items-center justify-center";
+                            iconDiv.innerHTML = '<img src="check.png" alt="Success" class="w-12 h-12">';
+                            notifDiv.appendChild(iconDiv);
+                            const msgDiv = document.createElement('div');
+                            msgDiv.textContent = "Thank you for verifying your email! Your account is now fully activated.";
+                            notifDiv.appendChild(msgDiv);
+                            document.body.appendChild(notifDiv);
+                            setTimeout(() => {
+                                notifDiv.classList.add('opacity-100');
+                                notifDiv.style.transform = 'translate(-50%, -50%)';
+                            }, 10);
+                            setTimeout(() => {
+                                notifDiv.classList.remove('opacity-100');
+                                notifDiv.style.transform = 'translate(-50%, 0)';
+                                setTimeout(() => {
+                                    notifDiv.remove();
+                                    window.location.href = 'index.html';
+                                }, 500);
+                            }, 3000);
+                            window.location.href = 'index.html';
+                        } else {
+                            alert('User profile not found in database.');
+                        }
+                    } else {
+                        alert('Your email is not verified yet. Please check your inbox and click the verification link.');
+                    }
+                } catch (error) {
+                    alert('Error verifying email: ' + error.message);
+                }
+            });
+
+      // Start timer on page load
+      document.addEventListener('DOMContentLoaded', startResendTimer);
+    </script>
+</body>
+</html>

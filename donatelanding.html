@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        .slide-up {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.7s cubic-bezier(.4,0,.2,1), transform 0.7s cubic-bezier(.4,0,.2,1);
+        }
+        .slide-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Help Families in Village - Tahanan ng Pagmamahal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brand-red': '#dc2626',
+                        'brand-orange': '#ea580c',
+                        'donate-purple': '#6C63FF'
+                    },
+                    fontFamily: {
+                        'poppins': ['Poppins', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="font-poppins bg-white">
+    <!-- Top Half Image Banner (exactly half screen) -->
+     
+    <div class="relative w-full h-[50vh] min-h-[200px] max-h-[50vh] flex items-center justify-center overflow-hidden">
+        <img src="pic 1.jpg" alt="Campaign" class="absolute inset-0 w-full h-full object-cover" />
+        <div class="absolute inset-0 bg-black bg-opacity-60"></div>
+        <div class="relative z-10 w-full text-center text-white px-4 flex flex-col items-center justify-center">
+            <h1 class="text-3xl md:text-5xl font-bold mb-4 leading-tight drop-shadow-lg slide-up">
+                Give Hope, Give Love: Support Tahanan ng Pagmamahal
+            </h1>
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-6 text-base md:text-lg mb-2 slide-up">
+                <span class="font-medium">By Tahanan ng Pagmamahal</span>
+                <span class="hidden sm:inline">•</span>
+                <span>Join hundreds of supporters</span>
+                <span class="hidden sm:inline">•</span>
+                <span class="text-yellow-300 font-medium">Your kindness matters</span>
+            </div>
+        </div>
+    </div>
+    </div>
+    <a href="index.html" class="absolute top-6 left-6 flex items-center text-gray-400 hover:text-brand-red transition-colors text-sm font-medium">
+    <svg class="h-5 w-5 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+    </svg>
+    Back
+    </a>
+
+
+
+    <!-- Main Content -->
+    <div class="max-w-4xl mx-auto px-4 py-8 min-h-[50vh] overflow-auto pb-32">
+        <!-- Image Gallery -->
+        <div class="mb-12 slide-up">
+            <h2 class="text-2xl font-semibold text-gray-900 mb-6">Campaign Photos</h2>
+            <div class="flex gap-4 overflow-x-auto pb-4">
+                <div class="flex-shrink-0 w-24 h-24 bg-gray-200 rounded-lg overflow-hidden cursor-pointer" onclick="expandImage('pic6.jpg')">
+                    <img src="pic6.jpg" alt="Campaign photo 1" class="w-full h-full object-cover">
+                </div>
+                <div class="flex-shrink-0 w-24 h-24 bg-gray-200 rounded-lg overflow-hidden cursor-pointer" onclick="expandImage('pic7.jpg')">
+                    <img src="pic7.jpg" alt="Campaign photo 2" class="w-full h-full object-cover">
+                </div>
+                <div class="flex-shrink-0 w-24 h-24 bg-gray-200 rounded-lg overflow-hidden cursor-pointer" onclick="expandImage('pic8.jpg')">
+                    <img src="pic8.jpg" alt="Campaign photo 3" class="w-full h-full object-cover">
+                </div>
+                <div class="flex-shrink-0 w-24 h-24 bg-gray-200 rounded-lg overflow-hidden cursor-pointer" onclick="expandImage('pic9.jpg')">
+                    <img src="pic9.jpg" alt="Campaign photo 4" class="w-full h-full object-cover">
+                </div>
+            </div>
+        </div>
+        <!-- Expanded Image Modal -->
+        <div id="expandedImageModal" class="fixed inset-0 bg-black bg-opacity-70 z-50 hidden flex items-center justify-center">
+            <span class="absolute top-6 right-8 text-white text-3xl cursor-pointer" onclick="closeExpandedImage()">&times;</span>
+            <img id="expandedImage" src="" alt="Expanded" class="max-w-full max-h-[80vh] rounded-xl shadow-lg border-4 border-white">
+        </div>
+        <script>
+            function expandImage(src) {
+                document.getElementById('expandedImage').src = src;
+                document.getElementById('expandedImageModal').classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            }
+            function closeExpandedImage() {
+                document.getElementById('expandedImageModal').classList.add('hidden');
+                document.body.style.overflow = 'auto';
+            }
+            // Close modal when clicking outside the image
+            document.addEventListener('DOMContentLoaded', function() {
+                document.getElementById('expandedImageModal').addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        closeExpandedImage();
+                    }
+                });
+            });
+        </script>
+
+        <!-- Description -->
+        <div class="mb-12 slide-up">
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+                <h3 class="text-xl font-semibold text-gray-900 mb-4">About </h3>
+                <div id="description" class="text-gray-700 leading-relaxed">
+                    <p class="mb-4">
+                        Your generosity can change lives! Tahanan ng Pagmamahal is a loving home for children in need, providing shelter, education, and hope for a brighter future. Every donation helps us continue our mission to care for, nurture, and empower vulnerable children.
+                    </p>
+                    <div id="moreDescription" class="hidden">
+                        <p class="mb-4">
+                            When you give to Tahanan ng Pagmamahal, you become part of a family that believes every child deserves love, safety, and the chance to dream. Your support provides:
+                        </p>
+                        <ul class="list-disc list-inside mb-4 space-y-2">
+                            <li>Nutritious meals and safe shelter</li>
+                            <li>Access to quality education and school supplies</li>
+                            <li>Medical care and emotional support</li>
+                            <li>Opportunities for growth, play, and learning</li>
+                        </ul>
+                        <p>
+                            No act of kindness is too small. Together, we can build a future filled with hope and possibility for every child. Donate today and make a lasting impact!
+                        </p>
+                    </div>
+                </div>
+                <button id="readMoreBtn"
+                        onclick="toggleDescription()"
+                        class="mt-4 text-red-600 hover:text-red-700 font-medium transition-colors">
+                Read more
+                </button>
+            </div>
+        </div>
+
+        <!-- Organizer Info -->
+        <div class="bg-gray-50 rounded-2xl p-8 slide-up">
+            <div class="flex items-center gap-4 mb-4">
+                <div class="w-16 h-16 bg-brand-red rounded-full flex items-center justify-center">
+                    <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                    </svg>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold text-gray-900">Tahanan ng Pagmamahal</h4>
+                    <p class="text-gray-600">Children's Home & Community Support</p>
+                </div>
+            </div>
+            <p class="text-gray-700 leading-relaxed">
+                Tahanan ng Pagmamahal has been serving vulnerable children and families in our community for over a decade. We are committed to providing love, care, and support to those who need it most, especially during times of crisis.
+            </p>
+        </div>
+    <script>
+        // Slide-up animation on scroll (like index.html)
+        document.addEventListener("DOMContentLoaded", function() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    } else {
+                        entry.target.classList.remove('visible');
+                    }
+                });
+            }, { threshold: 0.15 });
+
+            document.querySelectorAll('.slide-up').forEach(el => {
+                observer.observe(el);
+            });
+        });
+    </script>
+    </div>
+
+    <!-- Sticky Donate Button -->
+    <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 z-50">
+        <div class="max-w-md mx-auto">
+            <a 
+                href="donate.html"
+                class="w-full block bg-brand-red hover:bg-red-700 text-white py-4 rounded-xl font-semibold text-lg transition-colors focus:outline-none focus:ring-2 focus:ring-brand-red focus:ring-offset-2 shadow-lg text-center"
+            >
+                Donate Now
+            </a>
+        </div>
+    </div>
+
+    <!-- Donation Modal -->
+    <div id="donationModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-8">
+            <div class="text-center mb-6">
+                <h3 class="text-2xl font-semibold text-gray-900 mb-2">Make a Donation</h3>
+                <p class="text-gray-600">Help families affected by the disaster</p>
+            </div>
+
+            <form class="space-y-6">
+                <!-- Donation Amount -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-3">Select Amount</label>
+                    <div class="grid grid-cols-3 gap-3 mb-4">
+                        <button type="button" class="donation-amount py-3 px-4 border border-gray-200 rounded-lg text-center font-medium hover:border-donate-purple hover:text-donate-purple transition-colors" data-amount="25">$25</button>
+                        <button type="button" class="donation-amount py-3 px-4 border border-gray-200 rounded-lg text-center font-medium hover:border-donate-purple hover:text-donate-purple transition-colors" data-amount="50">$50</button>
+                        <button type="button" class="donation-amount py-3 px-4 border border-gray-200 rounded-lg text-center font-medium hover:border-donate-purple hover:text-donate-purple transition-colors" data-amount="100">$100</button>
+                    </div>
+                    <input 
+                        type="number" 
+                        id="customAmount"
+                        class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-donate-purple focus:ring-1 focus:ring-donate-purple focus:outline-none transition-colors"
+                        placeholder="Enter custom amount"
+                        min="1"
+                    >
+                </div>
+
+                <!-- Donor Information -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">First Name</label>
+                        <input 
+                            type="text" 
+                            class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-donate-purple focus:ring-1 focus:ring-donate-purple focus:outline-none transition-colors"
+                            placeholder="First name"
+                            required
+                        >
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
+                        <input 
+                            type="text" 
+                            class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-donate-purple focus:ring-1 focus:ring-donate-purple focus:outline-none transition-colors"
+                            placeholder="Last name"
+                            required
+                        >
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                    <input 
+                        type="email" 
+                        class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-donate-purple focus:ring-1 focus:ring-donate-purple focus:outline-none transition-colors"
+                        placeholder="your@email.com"
+                        required
+                    >
+                </div>
+
+                <!-- Anonymous Donation -->
+                <div class="flex items-center">
+                    <input type="checkbox" id="anonymous" class="rounded border-gray-300 text-donate-purple focus:ring-donate-purple">
+                    <label for="anonymous" class="ml-2 text-sm text-gray-600">Make this donation anonymous</label>
+                </div>
+
+                <!-- Buttons -->
+                <div class="flex gap-3">
+                    <button 
+                        type="button" 
+                        onclick="closeDonationModal()" 
+                        class="flex-1 py-3 px-4 border border-gray-200 rounded-lg font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                    >
+                        Cancel
+                    </button>
+                    <button 
+                        type="submit" 
+                        class="flex-1 bg-donate-purple hover:bg-purple-700 text-white py-3 px-4 rounded-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-donate-purple focus:ring-offset-2"
+                    >
+                        Donate
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function toggleDescription() {
+            const moreDescription = document.getElementById('moreDescription');
+            const readMoreBtn = document.getElementById('readMoreBtn');
+            
+            if (moreDescription.classList.contains('hidden')) {
+                moreDescription.classList.remove('hidden');
+                readMoreBtn.textContent = 'Read less';
+            } else {
+                moreDescription.classList.add('hidden');
+                readMoreBtn.textContent = 'Read more';
+            }
+        }
+
+        function openDonationModal() {
+            document.getElementById('donationModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeDonationModal() {
+            document.getElementById('donationModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Handle donation amount selection
+        document.addEventListener('DOMContentLoaded', function() {
+            const amountButtons = document.querySelectorAll('.donation-amount');
+            const customAmountInput = document.getElementById('customAmount');
+            
+            amountButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Remove active state from all buttons
+                    amountButtons.forEach(btn => {
+                        btn.classList.remove('border-donate-purple', 'text-donate-purple', 'bg-purple-50');
+                        btn.classList.add('border-gray-200');
+                    });
+                    
+                    // Add active state to clicked button
+                    this.classList.remove('border-gray-200');
+                    this.classList.add('border-donate-purple', 'text-donate-purple', 'bg-purple-50');
+                    
+                    // Set custom amount input
+                    customAmountInput.value = this.dataset.amount;
+                });
+            });
+            
+            // Clear button selection when custom amount is entered
+            customAmountInput.addEventListener('input', function() {
+                amountButtons.forEach(btn => {
+                    btn.classList.remove('border-donate-purple', 'text-donate-purple', 'bg-purple-50');
+                    btn.classList.add('border-gray-200');
+                });
+            });
+            
+            // Handle form submission
+            document.querySelector('#donationModal form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const amount = customAmountInput.value;
+                if (amount && amount > 0) {
+                    alert(`Thank you for your donation of $${amount}! Your contribution will make a real difference.`);
+                    closeDonationModal();
+                    this.reset();
+                } else {
+                    alert('Please enter a valid donation amount.');
+                }
+            });
+            
+            // Close modal when clicking outside
+            document.getElementById('donationModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeDonationModal();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

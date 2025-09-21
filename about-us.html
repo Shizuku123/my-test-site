@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Tahanan ng Pagmamahal - Children's Home</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        html, body { overflow-x: hidden; }
+        body { font-family: 'Poppins', sans-serif; }
+        .slide-up { opacity: 0; transform: translateY(40px); transition: opacity 0.7s cubic-bezier(.4,0,.2,1), transform 0.7s cubic-bezier(.4,0,.2,1); }
+        .slide-up.visible { opacity: 1; transform: translateY(0); }
+        .user-welcome { opacity: 0; transform: translateY(20px); transition: opacity 0.8s cubic-bezier(.4,0,.2,1), transform 0.8s cubic-bezier(.4,0,.2,1); }
+        .user-welcome.visible { opacity: 1; transform: translateY(0); }
+        .auth-loading { opacity: 0.5; pointer-events: none; }
+        /* mobile menu larger screen */
+        #mobile-menu { width: 85vw; max-width: 85vw; }
+        @media (max-width: 768px) {
+            #mobile-menu { width: 70vw; max-width: 70vw; }
+        }
+    </style>
+    <script>
+        // Ensure toggleMobileMenu is available before button is rendered
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const overlay = document.getElementById('mobile-menu-overlay');
+            if (menu.classList.contains('translate-x-full')) {
+                menu.classList.remove('translate-x-full');
+                menu.classList.add('translate-x-0');
+                overlay.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            } else {
+                menu.classList.add('translate-x-full');
+                menu.classList.remove('translate-x-0');
+                overlay.classList.add('hidden');
+                document.body.style.overflow = '';
+            }
+        }
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target); // Only animate once, smooth like index.html
+                    }
+                });
+            }, { threshold: 0.15 });
+
+            document.querySelectorAll('.slide-up').forEach(el => {
+                observer.observe(el);
+            });
+        });
+
+        // Remove duplicate/incorrect logic. Use unified logic below.
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - Tahanan ng Pagmamahal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'poppins': ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        'brand-red': '#dc2626',
+                        'brand-orange': '#ea580c',
+                        'brand-yellow': '#d97706',
+                    }
+                }
+            }
+        }
+    </script>
+    <script>
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const overlay = document.getElementById('mobile-menu-overlay');
+            
+            if (menu.classList.contains('translate-x-full')) {
+                // Show menu
+                menu.classList.remove('translate-x-full');
+                menu.classList.add('translate-x-0');
+                overlay.classList.remove('hidden');
+                // Prevent body scroll when menu is open
+                document.body.style.overflow = 'hidden';
+            } else {
+                // Hide menu
+                menu.classList.add('translate-x-full');
+                menu.classList.remove('translate-x-0');
+                overlay.classList.add('hidden');
+                // Restore body scroll
+                document.body.style.overflow = '';
+            }
+        }
+        
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const menu = document.getElementById('mobile-menu');
+            const overlay = document.getElementById('mobile-menu-overlay');
+            const button = event.target.closest('button');
+            
+            if (!button && !menu.contains(event.target) && !menu.classList.contains('translate-x-full')) {
+                menu.classList.add('translate-x-full');
+                menu.classList.remove('translate-x-0');
+                overlay.classList.add('hidden');
+                document.body.style.overflow = '';
+            }
+        });
+
+        window.addEventListener('resize', function() {
+            const menu = document.getElementById('mobile-menu');
+            const overlay = document.getElementById('mobile-menu-overlay');
+            
+            // Close mobile menu on desktop view
+            if (window.innerWidth >= 768) {
+                menu.classList.add('translate-x-full');
+                menu.classList.remove('translate-x-0');
+                overlay.classList.add('hidden');
+                document.body.style.overflow = '';
+            }
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+    <script type="module">
+
+import { auth, db } from './firebase-donor.js';
+import { doc, updateDoc, getDoc, increment } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+import { signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+let authStateLoaded = false;
+
+document.addEventListener('DOMContentLoaded', () => {
+    auth.onAuthStateChanged(async (user) => {
+        const loginSection = document.getElementById('loginSection');
+        const userWelcomeSection = document.getElementById('userWelcomeSection');
+        const userName = document.getElementById('userName');
+        const mobileUserSection = document.getElementById('mobileUserSection');
+        const mobileUserName = document.getElementById('mobileUserName');
+        const donationHistoryLink = document.getElementById('donationHistoryLink');
+        const logoutLink = document.getElementById('logoutLink');
+
+        if (!authStateLoaded) {
+            await new Promise(resolve => setTimeout(resolve, 800)); // 800ms delay
+            authStateLoaded = true;
+        }
+
+        if (user && user.emailVerified) {
+            // Get user profile
+            const userRef = doc(db, "users", user.uid);
+            const userDoc = await getDoc(userRef);
+            if (userDoc.exists()) {
+                const userData = userDoc.data();
+                // Update visit tracking
+                await updateDoc(userRef, {
+                    lastVisit: new Date().toISOString(),
+                    visitCount: increment(1)
+                });
+                // Show user welcome section with animation
+                if (userData.firstName) {
+                    if (userName) userName.textContent = userData.firstName;
+                    if (mobileUserName) mobileUserName.textContent = userData.firstName;
+                    if (mobileUserSection) mobileUserSection.classList.remove('hidden');
+                    if (loginSection) loginSection.classList.add('hidden');
+                    if (userWelcomeSection) {
+                        userWelcomeSection.classList.remove('hidden');
+                        setTimeout(() => {
+                            userWelcomeSection.classList.add('visible');
+                        }, 200);
+                    }
+                    // Show donation history and log out links
+                    if (donationHistoryLink) donationHistoryLink.classList.remove('hidden');
+                    if (logoutLink) logoutLink.classList.remove('hidden');
+                }
+            }
+        } else {
+            if (loginSection) {
+                loginSection.classList.remove('auth-loading');
+                loginSection.classList.remove('hidden');
+            }
+            if (userWelcomeSection) {
+                userWelcomeSection.classList.add('hidden');
+                userWelcomeSection.classList.remove('visible');
+            }
+            if (mobileUserSection) mobileUserSection.classList.add('hidden');
+            // Hide donation history and log out links
+            if (donationHistoryLink) donationHistoryLink.classList.add('hidden');
+            if (logoutLink) logoutLink.classList.add('hidden');
+        }
+    });
+});
+
+window.handleLogout = function() {
+    const showLogoutAlert = (message, isError = false) => {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[90vw] max-w-sm bg-${isError ? 'red' : 'green'}-500 text-white px-6 py-4 rounded-lg shadow-lg z-50 transition-all duration-300 opacity-0 translate-y-8`;
+        alertDiv.innerHTML = `<i class="fas fa-${isError ? 'exclamation-circle' : 'check-circle'} mr-2"></i>${message}`;
+        document.body.appendChild(alertDiv);
+
+        setTimeout(() => {
+            alertDiv.classList.remove('opacity-0', 'translate-y-8');
+            alertDiv.classList.add('opacity-100', 'translate-y-0');
+        }, 100);
+
+        setTimeout(() => {
+            alertDiv.classList.remove('opacity-100', 'translate-y-0');
+            alertDiv.classList.add('opacity-0', 'translate-y-8');
+            setTimeout(() => {
+            alertDiv.remove();
+            }, 300);
+        }, 2000);
+        };
+
+        const confirmDiv = document.createElement('div');
+        confirmDiv.className = "fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[90vw] max-w-md bg-white text-gray-900 px-6 py-6 rounded-lg shadow-lg z-50 transition-all duration-300 opacity-0 translate-y-8 flex flex-col items-center";
+    confirmDiv.innerHTML = `
+        <span class="mb-2"><i class="fas fa-sign-out-alt mr-2 text-brand-red"></i>Are you sure you want to log out?</span>
+        <div class="flex gap-4">
+            <button id="confirmLogoutBtn" class="bg-brand-red hover:bg-brand-orange text-white px-4 py-2 rounded">Log out</button>
+            <button id="cancelLogoutBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-900 px-4 py-2 rounded">Cancel</button>
+        </div>
+    `;
+    document.body.appendChild(confirmDiv);
+
+    setTimeout(() => {
+        confirmDiv.classList.remove('opacity-0', 'translate-y-8');
+        confirmDiv.classList.add('opacity-100', 'translate-y-0');
+    }, 100);
+
+    document.getElementById('confirmLogoutBtn').onclick = function() {
+        signOut(auth).then(() => {
+            confirmDiv.remove();
+            showLogoutAlert('Successfully logged out!');
+            setTimeout(() => {
+                window.location.reload();
+            }, 2200);
+        }).catch((error) => {
+            confirmDiv.remove();
+            showLogoutAlert('Error logging out. Please try again.', true);
+        });
+    };
+    document.getElementById('cancelLogoutBtn').onclick = function() {
+        confirmDiv.classList.remove('opacity-100', 'translate-y-0');
+        confirmDiv.classList.add('opacity-0', 'translate-y-8');
+        setTimeout(() => {
+            confirmDiv.remove();
+        }, 300);
+    };
+};
+</script>
+</head>
+<body class="font-poppins bg-gray-50">
+    <!-- Desktop user welcome section -->
+    <div id="userWelcomeSection" class="user-welcome hidden">
+    <span hidden>Welcome back, <span id="userName"></span>!</span>
+    </div>
+    <!-- Header -->
+    <header class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <img src="tahanan-logo.png" alt="Tahanan ng Pagmamahal" class="h-12">
+                </div>
+                
+                <!-- Navigation -->
+                <nav class="hidden md:flex space-x-8">
+                    <a href="index.html" class="text-gray-700 hover:text-brand-red transition-colors">Home</a>
+                    <a href="about-us.html" class="text-gray-700 hover:text-brand-red transition-colors">About Us</a>
+                    <a href="contact.html" class="text-gray-700 hover:text-brand-red transition-colors">Contact</a>
+                    <a href="#" class="text-gray-700 hover:text-brand-red transition-colors">Donate</a>
+                </nav>
+                
+                <!-- Mobile menu button -->
+                <button class="md:hidden p-2" onclick="toggleMobileMenu()">
+                    <i class="fas fa-bars text-gray-700"></i>
+                </button>
+            </div>
+            
+            <!-- Enhanced mobile navigation with better responsiveness -->
+            <div id="mobile-menu-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden transition-opacity duration-300" onclick="toggleMobileMenu()"></div>
+            <div id="mobile-menu" class="fixed top-0 right-0 h-full w-80 bg-white shadow-xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out">
+                <div class="flex justify-between items-center p-4 border-b">
+                    <h2 class="text-lg font-semibold text-gray-700">Menu</h2>
+                    <button onclick="toggleMobileMenu()" class="p-2">
+                        <i class="fas fa-times text-gray-700"></i>
+                    </button>
+                </div>
+                <div class="flex flex-col p-4">
+                    <!-- Enhanced user profile section with better mobile visibility -->
+                    <div id="mobileUserSection" class="hidden mb-4 pb-4 border-b border-gray-200">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-10 h-10 bg-brand-red rounded-full flex items-center justify-center">
+                                <i class="fas fa-user text-white"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-500">Welcome back,</p>
+                                <p id="mobileUserName" class="font-semibold text-gray-900"></p>
+                            </div>
+                        </div>
+                        <a href="profile.html" class="flex items-center text-brand-red hover:text-brand-orange transition-colors py-2">
+                            <i class="fas fa-user-circle mr-3"></i> My Profile
+                        </a>
+                    </div>
+                    
+                    <a href="index.html" class="text-gray-700 hover:text-brand-red transition-colors py-3 border-b border-gray-100">Home</a>
+                    <a href="about-us.html" class="text-gray-700 hover:text-brand-red transition-colors py-3 border-b border-gray-100">About Us</a>
+                    <a href="contact.html" class="text-gray-700 hover:text-brand-red transition-colors py-3 border-b border-gray-100">Contact</a>
+                    <a href="donatelanding.html" class="text-gray-700 hover:text-brand-red transition-colors py-3 border-b border-gray-100">Donate</a>
+                    <a id="donationHistoryLink" href="donatelanding.html" class="text-gray-700 hover:text-brand-red transition-colors py-3 border-b border-gray-100 hidden">Donation History</a>
+                    <a id="logoutLink" href="#" onclick="handleLogout()" class="text-gray-700 hover:text-brand-red transition-colors py-3 hidden">Log out</a>
+                    <script>
+                        // Show/hide donation history and logout based on auth state
+                        document.addEventListener('DOMContentLoaded', function() {
+                            if (window.auth) {
+                                auth.onAuthStateChanged(function(user) {
+                                    const donationHistoryLink = document.getElementById('donationHistoryLink');
+                                    const logoutLink = document.getElementById('logoutLink');
+                                    if (user && user.emailVerified) {
+                                        donationHistoryLink.classList.remove('hidden');
+                                        logoutLink.classList.remove('hidden');
+                                    } else {
+                                        donationHistoryLink.classList.add('hidden');
+                                        logoutLink.classList.add('hidden');
+                                    }
+                                });
+                            }
+                        });
+                    </script>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative h-96 bg-gradient-to-r from-blue-200 to-blue-300 flex items-center justify-center">
+    <img src="pic11.jpg" alt="Hands holding heart" class="absolute inset-0 w-full h-full object-cover slide-up">
+    <div class="absolute inset-0 bg-black bg-opacity-20 slide-up"></div>
+    <div class="relative text-center text-white z-10 flex flex-col items-center slide-up">
+            <div class="mb-4"></div>
+            <h1 class="text-5xl md:text-6xl font-bold mb-2">About Us</h1>
+        </div>
+    </section>
+
+    <!-- Our Story Section -->
+    <section class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 slide-up">
+            <h2 class="text-3xl font-bold text-gray-900 mb-8 slide-up">Our Story</h2>
+            <div class="grid lg:grid-cols-2 gap-12 items-start slide-up">
+                <div class="slide-up">
+                    <img src="pic10.jpg" alt="Our Story" class="w-full rounded-lg shadow-md slide-up">
+                </div>
+                <div class="space-y-4 text-gray-700 leading-relaxed slide-up">
+                    <p class="slide-up">With a strong track record spanning over 15 years, Tahanan ng Pagmamahal Children's Home, Inc. (TNPCHI) was established in July 2009 as a non-stock, non-profit organization. The organization is driven by their deep concern for our society's abandoned, neglected, foundling, and surrendered children, the couple and their dedicated friends embarked on a remarkable journey despite financial constraints.</p>
+                    <p class="slide-up">In the face of economic challenges, they initiated their mission by welcoming the children's development and arranging temporary housing through rented apartments. Their unwavering commitment and resourcefulness empowered them to create a significant and positive difference in the lives of these vulnerable children.</p>
+                    <p class="slide-up">In 2014, a generous supporter generously donated the land where Tahanan stands today, offering a permanent location at 15 Dr. Pilapil Street, Brgy. Sagad, Pasig City. This act of kindness has enabled Tahanan to establish roots and create a lasting impact on the lives of children in need.</p>
+                    <p class="slide-up">The organization is registered with the Securities and Exchange Commission (SEC). It is registered, licensed, and accredited by the Department of Social Welfare and Development (DSWD).</p>
+                </div>
+            </div>
+            <div class="grid lg:grid-cols-2 gap-12 items-center mt-12 slide-up">
+                <div class="lg:order-2 slide-up">
+                    <img src="pic13.jpg" alt="Children Activities" class="w-full rounded-lg shadow-md slide-up">
+                </div>
+                <div class="lg:order-1 text-gray-700 leading-relaxed slide-up">
+                    <p class="slide-up">The organization is registered with the Securities and Exchange Commission (SEC). It is registered, licensed, and accredited by the Department of Social Welfare and Development (DSWD).</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Vision, Mission, Goals Section -->
+    <section class="py-16 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 slide-up">
+            <h2 class="text-3xl font-bold text-gray-900 mb-4 text-center slide-up">Our Vision, Mission, and Program Objectives:</h2>
+            <p class="text-xl text-gray-600 text-center mb-12 slide-up">Illuminating a Path of Love and Transformation</p>
+            <div class="grid md:grid-cols-2 gap-8 slide-up">
+                <!-- Vision -->
+                <div class="bg-white rounded-lg shadow-md overflow-hidden slide-up">
+                    <div class="p-6 slide-up">
+                        <h3 class="text-xl font-bold text-gray-900 mb-4 slide-up">VISION</h3>
+                        <p class="text-gray-700 mb-4 slide-up">A world where God's love and care for children.</p>
+                        <img src="pic15.jpg" alt="Vision" class="w-full rounded-lg slide-up">
+                    </div>
+                </div>
+                <!-- Mission -->
+                <div class="bg-white rounded-lg shadow-md overflow-hidden slide-up">
+                    <div class="p-6 slide-up">
+                        <h3 class="text-xl font-bold text-gray-900 mb-4 slide-up">MISSION</h3>
+                        <ul class="text-gray-700 space-y-2 mb-4 slide-up">
+                            <li class="slide-up">• To serve God and bring Christ to the lives of abandoned, neglected, surrendered, and foundling children.</li>
+                            <li class="slide-up">• To provide a safe and loving home.</li>
+                            <li class="slide-up">• To provide active advocacy on the rights of the children.</li>
+                            <li class="slide-up">• To foster partnerships with churches, government, and NGOs through collaboration and networking.</li>
+                        </ul>
+                        <img src="pic16.jpg" alt="Mission" class="w-full rounded-lg slide-up">
+                    </div>
+                </div>
+                <!-- Goal -->
+                <div class="bg-white rounded-lg shadow-md overflow-hidden slide-up">
+                    <div class="p-6 slide-up">
+                        <h3 class="text-xl font-bold text-gray-900 mb-4 slide-up">GOAL</h3>
+                        <p class="text-gray-700 mb-4 slide-up">To provide a safe and secure family environment to the children to help them attain holistic life by providing shelter, spiritual formation, and psycho-social and educational services.</p>
+                        <img src="pic17.jpg" alt="Goal" class="w-full rounded-lg slide-up">
+                    </div>
+                </div>
+                <!-- Objectives -->
+                <div class="bg-white rounded-lg shadow-md overflow-hidden slide-up">
+                    <div class="p-6 slide-up">
+                        <h3 class="text-xl font-bold text-gray-900 mb-4 slide-up">OBJECTIVES</h3>
+                        <ul class="text-gray-700 space-y-2 mb-4 slide-up">
+                            <li class="slide-up">• To provide a therapeutic and healing environment.</li>
+                            <li class="slide-up">• To provide basic education and life formations and services.</li>
+                            <li class="slide-up">• To provide therapeutic counseling and programs and services.</li>
+                        </ul>
+                        <img src="pic18.jpg" alt="Objectives" class="w-full rounded-lg slide-up">
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-12 slide-up">
+                <button class="bg-brand-orange hover:bg-orange-600 text-white px-8 py-3 rounded-lg font-semibold transition-colors slide-up">
+                    Learn More
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Program Description Section -->
+    <section class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 slide-up">
+            <div class="grid lg:grid-cols-2 gap-12 items-center slide-up">
+                <div class="slide-up">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-6 slide-up">PROGRAM DESCRIPTION</h2>
+                    <p class="text-gray-700 leading-relaxed mb-6 slide-up">
+                        At Tahanan ng Pagmamahal Children's Home, our comprehensive programs are designed to provide holistic care and development in a nurturing environment, encompassing various aspects of their well-being. We strive to ensure each child's holistic development and growth under our care through our Remedial, Health & Medical Services, Psycho-Social Services, Education, Alternative Family Care Program, Reintegration, and Spiritual Enhancement initiatives.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    
+    </script>
+    
+    
+</body>
+</html>
